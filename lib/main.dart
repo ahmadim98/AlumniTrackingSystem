@@ -10,21 +10,14 @@
 // bar items. The first one is selected.](https://flutter.github.io/assets-for-api-docs/assets/material/bottom_navigation_bar.png)
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:dash_chat/dash_chat.dart';
+import 'destination.dart';
 
-class Destination {
-  const Destination({@required this.page, @required this.title, @required this.icon, this.color = Colors.lightBlue});
-  final String page;
-  final String title;
-  final IconData icon;
-  final MaterialColor color;
-}
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 
-const List<Destination> allDestinations = <Destination>[
-  Destination(page:'surveys' ,title: 'Survey',icon: Icons.assignment),
-  Destination(page:'feedback' ,title: 'Feedback', icon: Icons.comment),
-  Destination(page:'profile' ,title: 'Profile',icon: Icons.person),
-];
+import 'survey.dart';
+import 'feedback.dart';
+
+const bool loggedin = false;
 
 class RootPage extends StatelessWidget {
   const RootPage({ Key key, this.destination }) : super(key: key);
@@ -143,11 +136,20 @@ class RootPage extends StatelessWidget {
         ),
       );
     }else if(destination.page == "profile"){
+
       return Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: Text(destination.title),
           backgroundColor: destination.color,
+          leading: GestureDetector(
+            onTap: () {
+              Navigator.pushReplacementNamed(context, '/login');
+              },
+            child: Icon(
+              Icons.exit_to_app,  // add custom icons also
+            ),
+          ),
           /*leading: IconButton(
           icon: Icon(Icons),
           onPressed: () {
@@ -278,131 +280,6 @@ class _TextPageState extends State<TextPage> {
   }
 }
 
-class showSurvey extends StatefulWidget {
-  const showSurvey({ Key key, this.destination }) : super(key: key);
-
-  final Destination destination;
-
-  @override
-  _showSurvey createState() => _showSurvey();
-}
-
-class _showSurvey extends State<showSurvey> {
-  TextEditingController _textController;
-
-  @override
-  void initState() {
-    super.initState();
-    _textController = TextEditingController(
-      text: 'sample text: ${widget.destination.title}',
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    const List<int> shades = <int>[50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.destination.title),
-        backgroundColor: widget.destination.color,
-      ),
-      backgroundColor: Colors.white,
-      body: SizedBox.expand(
-        child: ListView.builder(
-          itemCount: shades.length,
-          itemBuilder: (BuildContext context, int index) {
-            return SizedBox(
-
-              height: 200,
-              child: Card(
-                //margin: EdgeInsets.all(5),
-                margin: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                color: Colors.white,
-                child: InkWell(
-                  /*onTap: () {
-                    Navigator.pushNamed(context, "/feedback");
-                  },*/
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[ Text('Question $index : ', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
-                      new Row(children:[new Radio(value: 0,groupValue: -1,onChanged: (val) {setState(() {});},), new Text("Answer 1"),]),
-                      new Row(children:[new Radio(value: 0,groupValue: -1,onChanged: (val) {setState(() {});},), new Text("Answer 2"),]),
-                      new Row(children:[new Radio(value: 0,groupValue: -1,onChanged: (val) {setState(() {});},), new Text("Answer 3"),]),
-                    ],
-
-                  ),
-
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
-  }
-}
-
-class FeedbackPage extends StatefulWidget {
-  const FeedbackPage({ Key key, this.destination }) : super(key: key);
-
-  final Destination destination;
-
-  @override
-  _FeedbackPage createState() => _FeedbackPage();
-}
-
-class _FeedbackPage extends State<FeedbackPage> {
-  TextEditingController _textController;
-
-  @override
-  void initState() {
-    super.initState();
-    _textController = TextEditingController(
-      text: '${widget.destination.title}',
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.destination.title),
-        backgroundColor: widget.destination.color,
-      ),
-      backgroundColor: widget.destination.color[30],
-
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-
-        children: <Widget>[ TextField(controller: _textController),
-        DashChat(
-            //inputToolbarMargin: (EdgeInsets.all(30.0)),
-            //inputToolbarPadding: (EdgeInsets.all(30.0)),
-            user: ChatUser(
-              name: "Jhon Doe",
-              uid: "xxxxxxxxx",
-              avatar: "https://www.wrappixel.com/ampleadmin/assets/images/users/4.jpg",
-            ), onSend: (ChatMessage ) {}, messages: <ChatMessage>[],
-        ),
-        ]
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
-  }
-}
-
-
 class DestinationView extends StatefulWidget {
   const DestinationView({ Key key, this.destination }) : super(key: key);
 
@@ -425,6 +302,8 @@ class _DestinationViewState extends State<DestinationView> {
                 return RootPage(destination: widget.destination);
               case '/list':
                 return ListPage(destination: widget.destination);
+              case '/login':
+                return LoginPage(destination: widget.destination);
               case '/text':
                 return TextPage(destination: widget.destination);
               case '/feedback':
@@ -479,6 +358,95 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin<HomeP
   }
 }
 
+class LoginPage extends StatefulWidget {
+  const LoginPage({ Key key, this.destination }) : super(key: key);
+
+  final Destination destination;
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
+
+  @override
+  Widget build(BuildContext context) {
+
+    final emailField = TextField(
+      obscureText: false,
+      style: style,
+      decoration: InputDecoration(
+          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+          hintText: "Email",
+          border:
+          OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+    );
+    final passwordField = TextField(
+      obscureText: true,
+      style: style,
+      decoration: InputDecoration(
+          contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+          hintText: "Password",
+          border:
+          OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+    );
+    final loginButon = Material(
+      elevation: 5.0,
+      borderRadius: BorderRadius.circular(30.0),
+      color: Color(0xff01A0C7),
+      child: MaterialButton(
+        minWidth: MediaQuery.of(context).size.width,
+        padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
+        onPressed: () {
+          Route route = MaterialPageRoute(builder: (context) => HomePage());
+          Navigator.push(context, route);
+          },
+        child: Text("Login",
+            textAlign: TextAlign.center,
+            style: style.copyWith(
+                color: Colors.white, fontWeight: FontWeight.bold)),
+      ),
+    );
+
+    return Scaffold(
+      body: Center(
+
+        child: Container(
+          color: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(36.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                SizedBox(
+                  height: 155.0,
+                  child: Image.asset(
+                    "logo.png",
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                SizedBox(height: 45.0),
+                emailField,
+
+                SizedBox(height: 25.0),
+                passwordField,
+                SizedBox(
+                  height: 35.0,
+                ),
+                loginButon,
+                SizedBox(
+                  height: 15.0,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// This Widget is the main application widget.
 class MyApp extends StatelessWidget {
   static const String _title = 'Flutter Code Sample';
@@ -486,12 +454,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: HomePage(),
+      home: LoginPage(),
     );
   }
 }
 
 
-void main() => runApp(MyApp());
+void main() => runApp(Phoenix(
+  child: MyApp(),
+),);
 
 
