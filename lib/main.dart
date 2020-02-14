@@ -144,7 +144,7 @@ class RootPage extends StatelessWidget {
           backgroundColor: destination.color,
           leading: GestureDetector(
             onTap: () {
-              Navigator.pushReplacementNamed(context, '/login');
+              Phoenix.rebirth(context);
               },
             child: Icon(
               Icons.exit_to_app,  // add custom icons also
@@ -377,7 +377,7 @@ class _LoginPageState extends State<LoginPage> {
       style: style,
       decoration: InputDecoration(
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
-          hintText: "Email",
+          hintText: "Student ID",
           border:
           OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
     );
