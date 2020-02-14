@@ -16,6 +16,7 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 import 'survey.dart';
 import 'feedback.dart';
+import 'user.dart';
 
 const bool loggedin = false;
 
@@ -369,6 +370,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20.0);
 
+  int _studentid = 0;
+  int _password = 0;
   @override
   Widget build(BuildContext context) {
 
@@ -380,6 +383,12 @@ class _LoginPageState extends State<LoginPage> {
           hintText: "Student ID",
           border:
           OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+      onChanged: (str) {
+        setState(() {
+          var id = int.parse(str);
+          this._studentid = id;
+        });
+      },
     );
     final passwordField = TextField(
       obscureText: true,
@@ -389,6 +398,12 @@ class _LoginPageState extends State<LoginPage> {
           hintText: "Password",
           border:
           OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+      onChanged: (str) {
+        setState(() {
+          var pass = int.parse(str);
+          this._password = pass;
+        });
+      },
     );
     final loginButon = Material(
       elevation: 5.0,
@@ -398,8 +413,17 @@ class _LoginPageState extends State<LoginPage> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () {
-          Route route = MaterialPageRoute(builder: (context) => HomePage());
-          Navigator.push(context, route);
+          User login = new User(this._studentid,this._password);
+          Timer timer = new Timer(new Duration(seconds: 5), () {
+            bool checkLogin = login.loggedin;
+            print(checkLogin);
+            if(checkLogin){
+              Route route = MaterialPageRoute(builder: (context) => HomePage());
+              Navigator.push(context, route);
+            }else {
+              Navigator.pushNamed(context, "/");
+            }
+          });
           },
         child: Text("Login",
             textAlign: TextAlign.center,
