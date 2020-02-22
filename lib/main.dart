@@ -9,9 +9,11 @@
 // ![A scaffold with a bottom navigation bar containing three bottom navigation
 // bar items. The first one is selected.](https://flutter.github.io/assets-for-api-docs/assets/material/bottom_navigation_bar.png)
 import 'dart:async';
+import 'package:alumniapp/chat.dart';
 import 'package:flutter/material.dart';
 import 'destination.dart';
-
+import 'package:alumniapp/chat.dart';
+import 'package:alumniapp/profile.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 import 'survey.dart';
@@ -308,9 +310,11 @@ class _DestinationViewState extends State<DestinationView> {
               case '/text':
                 return TextPage(destination: widget.destination);
               case '/feedback':
-                return FeedbackPage(destination: widget.destination);
+                return chat();
               case '/showsurvey':
                 return showSurvey(destination: widget.destination);
+              case 'profile':
+                return profile();
             }
           },
         );
