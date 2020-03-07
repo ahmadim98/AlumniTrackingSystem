@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 //import 'package:alumniapp/const.dart';
+import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 class profile extends StatefulWidget {
   @override
@@ -25,6 +26,14 @@ class _profileState extends State<profile> {
             onPressed: () {},
           ),
         ],
+        leading: GestureDetector(
+          onTap: () {
+            Phoenix.rebirth(context);
+          },
+          child: Icon(
+            Icons.exit_to_app,  // add custom icons also
+          ),
+        ),
       ),
       body: Padding(
         padding: EdgeInsets.fromLTRB(30, 40, 30, 0),

@@ -12,15 +12,17 @@ import 'dart:async';
 import 'package:alumniapp/chat.dart';
 import 'package:flutter/material.dart';
 import 'destination.dart';
-import 'package:alumniapp/chat.dart';
-import 'package:alumniapp/profile.dart';
+import 'chat.dart';
+import 'profile.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 import 'survey.dart';
 import 'feedback.dart';
 import 'user.dart';
+import 'question.dart';
 
 const bool loggedin = false;
+retriveFromDB db = new retriveFromDB();
 
 class RootPage extends StatelessWidget {
   const RootPage({ Key key, this.destination }) : super(key: key);
@@ -89,6 +91,7 @@ class RootPage extends StatelessWidget {
         ),
       );
     }else if(destination.page == "surveys"){
+      print(db.surveys.length);
       return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -109,7 +112,7 @@ class RootPage extends StatelessWidget {
         //backgroundColor: destination.color[50],
         body: SizedBox.expand(
           child: ListView.builder(
-            itemCount: shades.length,
+            itemCount: db.surveys.length,
             itemBuilder: (BuildContext context, int index) {
               return SizedBox(
 
@@ -120,11 +123,11 @@ class RootPage extends StatelessWidget {
                   color: Colors.white,
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, "/showsurvey");
+                      Navigator.pushNamed(context, "/showsurvey",arguments: db.surveys[index]);
                     },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[ Text('Survey Title Test', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
+                      children: <Widget>[ Text(db.surveys[index].Surveyname, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
                         Text('28 People have answered', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20,),),
                         Icon(Icons.done_all, color: Colors.green, size: 20,),
                       ],
@@ -140,7 +143,8 @@ class RootPage extends StatelessWidget {
       );
     }else if(destination.page == "profile"){
 
-      return Scaffold(
+      return profile();
+      /*return Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: Text(destination.title),
@@ -168,7 +172,7 @@ class RootPage extends StatelessWidget {
             },
           ),
         ),
-      );
+      );*/
     }else {
       return Scaffold(
         appBar: AppBar(
@@ -312,7 +316,7 @@ class _DestinationViewState extends State<DestinationView> {
               case '/feedback':
                 return chat();
               case '/showsurvey':
-                return showSurvey(destination: widget.destination);
+                return showSurvey(destination: widget.destination, surveyy: settings.arguments,);
               case 'profile':
                 return profile();
             }
