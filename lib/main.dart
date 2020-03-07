@@ -12,10 +12,10 @@ import 'dart:async';
 import 'package:alumniapp/chat.dart';
 import 'package:flutter/material.dart';
 import 'destination.dart';
-import 'package:alumniapp/chat.dart';
 import 'package:alumniapp/profile.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 
+import 'profile.dart';
 import 'survey.dart';
 import 'feedback.dart';
 import 'user.dart';
@@ -139,8 +139,8 @@ class RootPage extends StatelessWidget {
         ),
       );
     }else if(destination.page == "profile"){
-
-      return Scaffold(
+return profile();
+     /* return Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: Text(destination.title),
@@ -190,7 +190,7 @@ class RootPage extends StatelessWidget {
             },
           ),
         ),
-      );
+      );*/
     }
   }
 
@@ -313,8 +313,6 @@ class _DestinationViewState extends State<DestinationView> {
                 return chat();
               case '/showsurvey':
                 return showSurvey(destination: widget.destination);
-              case 'profile':
-                return profile();
             }
           },
         );
@@ -450,7 +448,7 @@ class _LoginPageState extends State<LoginPage> {
                 SizedBox(
                   height: 155.0,
                   child: Image.asset(
-                    "logo.png",
+                    "assets/logo.png",
                     fit: BoxFit.contain,
                   ),
                 ),

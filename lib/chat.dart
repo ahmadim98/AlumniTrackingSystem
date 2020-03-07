@@ -134,7 +134,7 @@ class _chatState extends State<chat> {
           Flexible(
             child: Container(
               child: TextField(
-                style: TextStyle(color: primaryColor, fontSize: 15.0),
+                style: TextStyle(color: Colors.black, fontSize: 15.0),
                 controller: textEditingController,
                 decoration: InputDecoration.collapsed(
                   hintText: 'Type your message...',
