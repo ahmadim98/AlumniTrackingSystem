@@ -2,17 +2,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'destination.dart';
 
+import 'question.dart';
+
 class showSurvey extends StatefulWidget {
-  const showSurvey({ Key key, this.destination }) : super(key: key);
+  const showSurvey({ Key key, this.destination , @required this.surveyy}) : super(key: key);
 
   final Destination destination;
-
+  final Survey surveyy;
   @override
   _showSurvey createState() => _showSurvey();
 }
 
 class _showSurvey extends State<showSurvey> {
   TextEditingController _textController;
+  _showSurvey(){}
 
   @override
   void initState() {
@@ -22,6 +25,10 @@ class _showSurvey extends State<showSurvey> {
     );
   }
 
+  String _answer = "";
+  int length = 0;
+  List<String> _answers = new List(5);
+  List<Answer> answersToDB = new List();
   @override
   Widget build(BuildContext context) {
     const List<int> shades = <int>[50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
@@ -32,15 +39,20 @@ class _showSurvey extends State<showSurvey> {
       ),
       backgroundColor: Colors.white,
       body: SizedBox.expand(
-        child: ListView.builder(
-          itemCount: shades.length,//here where u can change the list !!
+        child:new Column(
+          children: <Widget>[
+        new Expanded(
+          child: new ListView.builder(
+          itemCount: widget.surveyy.Questions.length,//here where u can change the list !!
           itemBuilder: (BuildContext context, int index) {
+            //this._answers.add("");
+
             return SizedBox(
 
               height: 200,
               child: Card(
                 //margin: EdgeInsets.all(5),
-                margin: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                margin: EdgeInsets.symmetric(vertical: 1,horizontal: 10),
                 color: Colors.white,
                 child: InkWell(
                   /*onTap: () {
@@ -48,20 +60,45 @@ class _showSurvey extends State<showSurvey> {
                   },*/
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[ Text('Question $index : ', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
-                      new Row(children:[new Radio(value: 0,groupValue: -1,onChanged: (val) {setState(() {});},), new Text("Answer 1"),]),
-                      new Row(children:[new Radio(value: 0,groupValue: -1,onChanged: (val) {setState(() {});},), new Text("Answer 2"),]),
-                      new Row(children:[new Radio(value: 0,groupValue: -1,onChanged: (val) {setState(() {});},), new Text("Answer 3"),]),
+                    children: <Widget>[ Text('Question $index : '+ widget.surveyy.Questions[index].QuestionTitle , style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
+                      new Row(children:[new Radio(value: widget.surveyy.Questions[index].Options[0],groupValue: _answers[index],onChanged: (val) {setState(() {_answers[index] = val;});},), new Text(widget.surveyy.Questions[index].Options[0]),]),
+                      new Row(children:[new Radio(value: widget.surveyy.Questions[index].Options[1],groupValue: _answers[index],onChanged: (val) {setState(() {_answers[index] = val;});},), new Text(widget.surveyy.Questions[index].Options[1]),]),
+                      new Row(children:[new Radio(value: widget.surveyy.Questions[index].Options[2],groupValue: _answers[index],onChanged: (val) {setState(() {_answers[index] = val;});},), new Text(widget.surveyy.Questions[index].Options[2]),]),
                     ],
 
                   ),
 
                 ),
+
               ),
+
             );
           },
         ),
+        ),
+            const SizedBox(height: 5),
+            RaisedButton(
+              onPressed: () {
+                int counter = 1;
+                for(var col in this._answers){
+                  Answer answer = new Answer(widget.surveyy.ID,counter,437101237,col);
+                  answer.SubmitAnswers();
+
+                  //answersToDB.add(answer);
+                  counter++;
+                }
+                Timer timer = new Timer(new Duration(seconds: 10), () {
+                  Navigator.pop(context);
+                });
+              },
+              child: const Text(
+                  'Submit',
+                  style: TextStyle(fontSize: 20)
+              ),
+            ),
+          ],),
       ),
+
     );
   }
 
