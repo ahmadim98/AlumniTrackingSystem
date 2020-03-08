@@ -6,6 +6,8 @@ import 'package:mysql1/mysql1.dart' as mysql1;
 
 
 class profile extends StatefulWidget {
+
+
   @override
   _profileState createState() => _profileState();
 }
@@ -14,24 +16,32 @@ class _profileState extends State<profile> {
   var name;
   var major;
   var phone;
+
   places selectedPlace;
   final TextEditingController textEditingController = new TextEditingController();
-  Future getData() async{
-    final conn = await mysql1.MySqlConnection.connect(mysql1.ConnectionSettings(
-        host: DBH, port: DBP,  user: DBU, password: DBPAS, db: DBN));
-    var results = await conn
-        .query('select * from users where ID = ?', [437101893]);
-    for(var row in results){
-       name = row['Name'];
-       major = row['Major'];
-       phone = row['Phone'];
 
+    Future getData() async {
+      final conn = await mysql1.MySqlConnection.connect(
+          mysql1.ConnectionSettings(
+              host: DBH,
+              port: DBP,
+              user: DBU,
+              password: DBPAS,
+              db: DBN));
+      var results = await conn
+          .query('select * from users where ID = ?', [437101893]);
+      for (var row in results) {
+        name = row['Name'];
+        major = row['Major'];
+        phone = row['Phone'];
+      }
     }
-  }
-  @override
-  void initState() {
-    getData();
-  }
+
+    @override
+    void initState() {
+      getData();
+    }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
