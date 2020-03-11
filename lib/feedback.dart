@@ -2,11 +2,13 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'destination.dart';
 
+import 'chat_backend.dart';
+
 class FeedbackPage extends StatefulWidget {
-  const FeedbackPage({ Key key, this.destination }) : super(key: key);
+  const FeedbackPage({ Key key, this.destination ,@required this.chatt}) : super(key: key);
 
   final Destination destination;
-
+  final List<Chat> chatt;
   @override
   _FeedbackPage createState() => _FeedbackPage();
 }

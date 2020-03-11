@@ -18,32 +18,31 @@ import 'package:flutter_phoenix/flutter_phoenix.dart';
 
 import 'survey.dart';
 import 'feedback.dart';
+import 'chat_backend.dart';
 import 'user.dart';
 import 'question.dart';
 
+int studentID;
 const bool loggedin = false;
 retriveFromDB db = new retriveFromDB();
+retrieveFeedbackList fdlist = new retrieveFeedbackList(studentID);
+retrieveChat chatt;
+bool addNewChat = false;
 
 class RootPage extends StatelessWidget {
   const RootPage({ Key key, this.destination }) : super(key: key);
 
   final Destination destination;
-  //const List<int> shades = <int>[50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
-
   Widget _RPage(BuildContext context){
-    const List<int> shades = <int>[50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
+
     if (destination.page == "feedback" ){
+      chatt = new retrieveChat(studentID);
+      String nameOfNewFeedback = "";
       return Scaffold(
         appBar: AppBar(
           centerTitle: true,
           title: Text(destination.title),
           backgroundColor: destination.color,
-          /*leading: IconButton(
-          icon: Icon(Icons),
-          onPressed: () {
-
-          },
-        ),*/
           actions: <Widget>[
             // action button
 
@@ -51,41 +50,87 @@ class RootPage extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.add_circle),
               onPressed: () {
-
+                addNewChat = true;
               },
             ),
           ],
         ),
-        //backgroundColor: destination.color[50],
         body: SizedBox.expand(
           child: ListView.builder(
-            itemCount: shades.length,
+            itemCount: fdlist.feedbacks.length+1,
             itemBuilder: (BuildContext context, int index) {
-              return SizedBox(
+              if(index < fdlist.feedbacks.length){
+                return SizedBox(
+                  height: 100,
+                  child: Card(
+                    //margin: EdgeInsets.all(5),
+                    margin: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                    color: Colors.white,
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, "/feedback",arguments: {'chat': chatt.chat,'feedbackID': index+1,'feedbackTitle':fdlist.feedbacks[index].title},);
+                      },
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[ Text('feedback $index', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
+                          Text('feedback :' + fdlist.feedbacks[index].title, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
+                          Icon(Icons.chat, color: Colors.lightBlue, size: 20,),
+                        ],
 
-                height: 150,
-                child: Card(
-                  //margin: EdgeInsets.all(5),
-                  margin: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
-                  color: Colors.white,
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.pushNamed(context, "/feedback");
-                    },
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[ Text('feedback $index', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
-                        Text('feedback Title', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
-                        Text('created at : 1/11/2019', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20,),),
-                        Icon(Icons.insert_chart, color: Colors.cyan, size: 20,),
-                        Icon(Icons.pie_chart, color: Colors.orange, size: 20,),
-                      ],
+                      ),
 
                     ),
-
                   ),
-                ),
-              );
+                );
+              }else{
+                return Visibility(
+                  child:SizedBox(
+                      height: 205,
+                      child: Card(
+                        //margin: EdgeInsets.all(5),
+                        margin: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                        color: Colors.white,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[Text('Open new Feedback', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
+                            Icon(Icons.mail, color: Colors.green, size: 20,),
+                            Text('Set the name of feedback', style: TextStyle(color: Colors.black, fontSize: 22,),),
+                            TextField(
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'Enter Here'
+                              ),
+                              onChanged: (str) {
+                                nameOfNewFeedback = str;
+                              },
+                            ),
+                            ButtonBar(
+                              mainAxisSize: MainAxisSize.min, // this will take space as minimum as posible(to center)
+                              children: <Widget>[
+                                new RaisedButton(
+                                  child: new Text('Add'),
+                                  onPressed: (){
+                                    insertNewFeedback newFeedback = new insertNewFeedback(nameOfNewFeedback);
+                                    addNewChat = false;
+                                  },
+                                ),
+                                new RaisedButton(
+                                  child: new Text('Cancel'),
+                                  onPressed: (){
+                                    addNewChat = false;
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+
+                        ),
+                      ),
+                    ),
+                  visible:addNewChat,
+                );
+              };
+
             },
           ),
         ),
@@ -142,37 +187,7 @@ class RootPage extends StatelessWidget {
         ),
       );
     }else if(destination.page == "profile"){
-
       return profile();
-      /*return Scaffold(
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text(destination.title),
-          backgroundColor: destination.color,
-          leading: GestureDetector(
-            onTap: () {
-              Phoenix.rebirth(context);
-              },
-            child: Icon(
-              Icons.exit_to_app,  // add custom icons also
-            ),
-          ),
-          /*leading: IconButton(
-          icon: Icon(Icons),
-          onPressed: () {
-
-          },
-        ),*/
-        ),
-        //backgroundColor: destination.color[50],
-        body: SizedBox.expand(
-          child: InkWell(
-            onTap: () {
-              Navigator.pushNamed(context, "/list");
-            },
-          ),
-        ),
-      );*/
     }else {
       return Scaffold(
         appBar: AppBar(
@@ -204,89 +219,6 @@ class RootPage extends StatelessWidget {
   }
 }
 
-class ListPage extends StatelessWidget {
-  const ListPage({ Key key, this.destination }) : super(key: key);
-
-  final Destination destination;
-
-  @override
-  Widget build(BuildContext context) {
-    const List<int> shades = <int>[50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(destination.title),
-        backgroundColor: destination.color,
-      ),
-      backgroundColor: destination.color[50],
-      body: SizedBox.expand(
-        child: ListView.builder(
-          itemCount: shades.length,
-          itemBuilder: (BuildContext context, int index) {
-            return SizedBox(
-              height: 128,
-              child: Card(
-                color: destination.color[shades[index]].withOpacity(0.25),
-                child: InkWell(
-                  onTap: () {
-                    Navigator.pushNamed(context, "/text");
-                  },
-                  child: Center(
-                    child: Text('Item $index', style: Theme.of(context).primaryTextTheme.display1),
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
-
-class TextPage extends StatefulWidget {
-  const TextPage({ Key key, this.destination }) : super(key: key);
-
-  final Destination destination;
-
-  @override
-  _TextPageState createState() => _TextPageState();
-}
-
-class _TextPageState extends State<TextPage> {
-  TextEditingController _textController;
-
-  @override
-  void initState() {
-    super.initState();
-    _textController = TextEditingController(
-      text: 'sample text: ${widget.destination.title}',
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.destination.title),
-        backgroundColor: widget.destination.color,
-      ),
-      backgroundColor: widget.destination.color[50],
-      body: Container(
-        padding: const EdgeInsets.all(32.0),
-        alignment: Alignment.center,
-        child: TextField(controller: _textController),
-      ),
-    );
-  }
-
-  @override
-  void dispose() {
-    _textController.dispose();
-    super.dispose();
-  }
-}
-
 class DestinationView extends StatefulWidget {
   const DestinationView({ Key key, this.destination }) : super(key: key);
 
@@ -307,16 +239,13 @@ class _DestinationViewState extends State<DestinationView> {
             switch(settings.name) {
               case '/':
                 return RootPage(destination: widget.destination);
-              case '/list':
-                return ListPage(destination: widget.destination);
               case '/login':
                 return LoginPage(destination: widget.destination);
-              case '/text':
-                return TextPage(destination: widget.destination);
               case '/feedback':
-                return chat();
+                final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+                return chat(chatt: arguments['chat'],studentID: studentID,feedbackID: arguments['feedbackID'],feedbackTitle: arguments['feedbackTitle'],);
               case '/showsurvey':
-                return showSurvey(destination: widget.destination, surveyy: settings.arguments,);
+                return showSurvey(destination: widget.destination, surveyy: settings.arguments,studentID: studentID,);
               case 'profile':
                 return profile();
             }
@@ -395,6 +324,7 @@ class _LoginPageState extends State<LoginPage> {
         setState(() {
           var id = int.parse(str);
           this._studentid = id;
+          studentID = id;
         });
       },
     );
@@ -425,7 +355,7 @@ class _LoginPageState extends State<LoginPage> {
           Timer timer = new Timer(new Duration(seconds: 5), () {
             bool checkLogin = login.loggedin;
             print(checkLogin);
-            if(checkLogin){
+            if(checkLogin && this._studentid==this._password){
               Route route = MaterialPageRoute(builder: (context) => HomePage());
               Navigator.push(context, route);
             }else {

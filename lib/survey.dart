@@ -5,10 +5,12 @@ import 'destination.dart';
 import 'question.dart';
 
 class showSurvey extends StatefulWidget {
-  const showSurvey({ Key key, this.destination , @required this.surveyy}) : super(key: key);
+  const showSurvey({ Key key, this.destination , @required this.surveyy,@required this.studentID}) : super(key: key);
 
   final Destination destination;
   final Survey surveyy;
+  final int studentID;
+
   @override
   _showSurvey createState() => _showSurvey();
 }
@@ -31,7 +33,6 @@ class _showSurvey extends State<showSurvey> {
   List<Answer> answersToDB = new List();
   @override
   Widget build(BuildContext context) {
-    const List<int> shades = <int>[50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.destination.title),
@@ -81,10 +82,8 @@ class _showSurvey extends State<showSurvey> {
               onPressed: () {
                 int counter = 1;
                 for(var col in this._answers){
-                  Answer answer = new Answer(widget.surveyy.ID,counter,437101237,col);
+                  Answer answer = new Answer(widget.surveyy.ID,counter,widget.studentID,col);
                   answer.SubmitAnswers();
-
-                  //answersToDB.add(answer);
                   counter++;
                 }
                 Timer timer = new Timer(new Duration(seconds: 10), () {
