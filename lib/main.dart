@@ -187,7 +187,7 @@ class RootPage extends StatelessWidget {
         ),
       );
     }else if(destination.page == "profile"){
-      return profile();
+      return profile(studentID: studentID);
     }else {
       return Scaffold(
         appBar: AppBar(
@@ -247,7 +247,7 @@ class _DestinationViewState extends State<DestinationView> {
               case '/showsurvey':
                 return showSurvey(destination: widget.destination, surveyy: settings.arguments,studentID: studentID,);
               case 'profile':
-                return profile();
+                return profile(destination: widget.destination, studentID: studentID,);
             }
           },
         );

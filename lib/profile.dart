@@ -2,11 +2,16 @@ import 'package:alumniapp/CONDBINFO.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart' as mysql1;
+import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'destination.dart';
 //import 'package:alumniapp/const.dart';
 
 
 class profile extends StatefulWidget {
+  const profile({ Key key, this.destination , @required this.studentID}) : super(key: key);
 
+  final Destination destination;
+  final int studentID;
 
   @override
   _profileState createState() => _profileState();
@@ -29,10 +34,13 @@ class _profileState extends State<profile> {
               password: DBPAS,
               db: DBN));
       var results = await conn
-          .query('select * from users where ID = ?', [437101893]);
+          .query('select * from users where ID = ?', [widget.studentID]);
       for (var row in results) {
+        print(row['Name']);
         name = row['Name'];
+        print(row['Major']);
         major = row['Major'];
+        print(row['Phone']);
         phone = row['Phone'];
       }
     }
@@ -51,11 +59,21 @@ class _profileState extends State<profile> {
         SliverAppBar(
           centerTitle: true,
         pinned: true,
-        expandedHeight: 200.0,
+        expandedHeight: 50.0,
         flexibleSpace: FlexibleSpaceBar(
           title: Row(
             children: <Widget>[
-              Text('profile'),
+              GestureDetector(
+                onTap: () {
+                  Phoenix.rebirth(context);
+                },
+                child: Icon(
+                  Icons.exit_to_app,
+                  color: Colors.white,// add custom icons also
+                ),
+              ),
+
+              Text('    Profile'),
               /*Padding(
                      padding: const EdgeInsets.fromLTRB(50, 20, 0, 0),
                      child: CircleAvatar(backgroundImage: AssetImage('assets/user picture.png'),
