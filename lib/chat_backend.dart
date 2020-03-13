@@ -110,3 +110,56 @@ class retrieveChat {
     main();
   }
 }
+
+/*class streamChat{
+  List<Chat> chat;
+
+  streamChat(){
+    chat = new List();
+    Future<Chat> getChat() async{
+      // Open a connection (testdb should already exist)
+
+      // Query the database using a parameterized query
+      while(true){
+        final conn = await MySqlConnection.connect(ConnectionSettings(
+            host: '192.168.8.103', port: 3306, user: 'aim', password: '12345678', db: 'alumniapp'));
+        Timer timer = new Timer(new Duration(seconds: 30), () {
+          var results = await conn
+              .query('SELECT `ID`, `feedbackID`, `message`, `message_source`, `message_destination` FROM `feedbackchat`');
+
+          for (var col in results) {
+            int id = col[0];
+            int feedbackid = col[1];
+            String message = col[2].toString();
+            String from = col[3];
+            String to = col[4];
+            Chat ct = new Chat(id,feedbackid,from,to,message);
+            if(chat.isEmpty){
+              chat.add(ct);
+              return ct;
+            }else if(chat.contains(ct)){
+              print("message was found!");
+            }else {
+              chat.add(ct);
+              print("new chat coming");
+              return ct;
+            }
+          }
+        });
+        await conn.close();
+      }
+
+    }
+    Stream<Chat> stream = new Stream.fromFuture(getChat());
+    stream.listen((data) {
+      print("DataReceived: "+data.Message);
+    }, onDone: () {
+      print("Task Done");
+    }, onError: (error) {
+      print("Some Error");
+    });
+
+
+  }
+
+}*/

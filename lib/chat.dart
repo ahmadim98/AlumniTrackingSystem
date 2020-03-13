@@ -20,6 +20,7 @@ class chat extends StatefulWidget {
 class _chatState extends State<chat> {
   final TextEditingController textEditingController = new TextEditingController();
 
+  //streamChat sc = new streamChat();
   @override
   Widget build(BuildContext context) {
     return Scaffold(

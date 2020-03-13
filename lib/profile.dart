@@ -21,7 +21,9 @@ class _profileState extends State<profile> {
   var name;
   var major;
   var phone;
-
+  var twitteraccount;
+  final myController = TextEditingController();
+  var changstate = false;
   places selectedPlace;
   final TextEditingController textEditingController = new TextEditingController();
 
@@ -34,12 +36,14 @@ class _profileState extends State<profile> {
               password: DBPAS,
               db: DBN));
       var results = await conn
-          .query('select * from users where ID = ?', [widget.studentID]);
+          .query('select * from profile where GraduateID = ?', [widget.studentID]);
       for (var row in results) {
         print(row['Name']);
         name = row['Name'];
         print(row['Major']);
         major = row['Major'];
+        print(row['TwitterAccount']);
+        twitteraccount = row['TwitterAccount'];
         print(row['Phone']);
         phone = row['Phone'];
       }
@@ -52,6 +56,7 @@ class _profileState extends State<profile> {
 
   @override
   Widget build(BuildContext context) {
+    getData();
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: CustomScrollView(
@@ -125,13 +130,26 @@ class _profileState extends State<profile> {
                   ),
                 ),
                 SizedBox(height: 10,),
-                Text(
-                  '$major',
-                  style: TextStyle(
-                      fontSize: 20,
-                      letterSpacing: 2,
-                      fontWeight: FontWeight.bold
+                new GestureDetector(
+                  onTap: () {
+                    print("small test :D");
+                    changstate = true;
+                  },
+                  child: new Text(
+                    '$major',
+                    style: TextStyle(
+                        fontSize: 20,
+                        letterSpacing: 2,
+                        fontWeight: FontWeight.bold
+                    ),
+
                   ),
+                ),
+                Visibility(
+                  child:TextField(
+                    controller: myController,
+                  ),
+                  visible:changstate,
                 ),
                 SizedBox(height: 30,),
                 Row(
@@ -186,7 +204,7 @@ class _profileState extends State<profile> {
                 ),
                 SizedBox(height: 10,),
                 Text(
-                  '@test',
+                  '$twitteraccount',
                   style: TextStyle(
                       fontSize: 20,
                       letterSpacing: 2,
