@@ -21,6 +21,7 @@ class _profileState extends State<profile> {
   var name;
   var major;
   var phone;
+  var twitter;
 
   places selectedPlace;
   final TextEditingController textEditingController = new TextEditingController();
@@ -34,7 +35,7 @@ class _profileState extends State<profile> {
               password: DBPAS,
               db: DBN));
       var results = await conn
-          .query('select * from users where ID = ?', [widget.studentID]);
+          .query('select * from profile where GraduateID = ?', [widget.studentID]);
       for (var row in results) {
         print(row['Name']);
         name = row['Name'];
@@ -42,6 +43,7 @@ class _profileState extends State<profile> {
         major = row['Major'];
         print(row['Phone']);
         phone = row['Phone'];
+        twitter = row['TwitterAccount'];
       }
     }
 
@@ -186,7 +188,7 @@ class _profileState extends State<profile> {
                 ),
                 SizedBox(height: 10,),
                 Text(
-                  '@test',
+                  '$twitter',
                   style: TextStyle(
                       fontSize: 20,
                       letterSpacing: 2,
