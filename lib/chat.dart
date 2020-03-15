@@ -119,11 +119,12 @@ class _chatState extends State<chat> {
               child: new IconButton(
                 icon: new Icon(Icons.send),
                 onPressed: () {
-                  print(textEditingController.text);
-                  Chat ch = new Chat(-1,widget.feedbackID,widget.studentID.toString(),"1",textEditingController.text);
-                  ch.sendChat(widget.feedbackID);
-                  textEditingController.clear(); // Clear the Text area
-                  setState(() {});
+                  setState(() {
+                    print(textEditingController.text);
+                    Chat ch = new Chat(-1,widget.feedbackID,widget.studentID.toString(),"1",textEditingController.text);
+                    ch.sendChat(widget.feedbackID);
+                    textEditingController.clear();// Clear the Text area
+                  });
                 },
                 color: primaryColor,
               ),
