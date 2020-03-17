@@ -15,6 +15,7 @@ import 'destination.dart';
 import 'chat.dart';
 import 'profile.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
+import 'Loader.dart';
 
 import 'survey.dart';
 import 'feedback.dart';
@@ -352,6 +353,11 @@ class _LoginPageState extends State<LoginPage> {
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () {
           User login = new User(this._studentid,this._password);
+          ColorLoader(
+            color1: Colors.green,
+            color2: Colors.green,
+            color3: Colors.green,
+          );
           Timer timer = new Timer(new Duration(seconds: 5), () {
             bool checkLogin = login.loggedin;
             print(checkLogin);

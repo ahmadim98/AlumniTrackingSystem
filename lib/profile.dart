@@ -18,11 +18,12 @@ class profile extends StatefulWidget {
 }
 
 class _profileState extends State<profile> {
-  var name;
+  final Name = TextEditingController();
   var major;
   var phone;
   var twitteraccount;
   final myController = TextEditingController();
+
   var changstate = false;
   places selectedPlace;
   final TextEditingController textEditingController = new TextEditingController();
@@ -39,7 +40,7 @@ class _profileState extends State<profile> {
           .query('select * from profile where GraduateID = ?', [widget.studentID]);
       for (var row in results) {
         print(row['Name']);
-        name = row['Name'];
+        Name.text = row['Name'];
         print(row['Major']);
         major = row['Major'];
         print(row['TwitterAccount']);
@@ -57,6 +58,7 @@ class _profileState extends State<profile> {
   @override
   Widget build(BuildContext context) {
     getData();
+    myController.text = "small rtest";
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: CustomScrollView(
@@ -113,12 +115,23 @@ class _profileState extends State<profile> {
                   ),
                 ),
                 SizedBox(height: 10,),
-                Text(
+                /*Text(
                   '$name',
                   style: TextStyle(
                       fontSize: 20,
                       letterSpacing: 2,
                       fontWeight: FontWeight.bold
+                  ),
+                ),*/
+                TextField(
+                  controller: Name,
+                  style: TextStyle(
+                      fontSize: 20,
+                      letterSpacing: 2,
+                      fontWeight: FontWeight.bold
+                  ),
+                  decoration: new InputDecoration(
+                    border: InputBorder.none,
                   ),
                 ),
                 SizedBox(height: 30,),
@@ -145,11 +158,16 @@ class _profileState extends State<profile> {
 
                   ),
                 ),
-                Visibility(
-                  child:TextField(
-                    controller: myController,
+                TextField(
+                  controller: myController,
+                  style: TextStyle(
+                      fontSize: 20,
+                      letterSpacing: 2,
+                      fontWeight: FontWeight.bold
                   ),
-                  visible:changstate,
+                  decoration: new InputDecoration(
+                      border: InputBorder.none,
+                  ),
                 ),
                 SizedBox(height: 30,),
                 Row(

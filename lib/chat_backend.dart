@@ -1,4 +1,7 @@
+import 'package:alumniapp/CONDBINFO.dart';
 import 'package:alumniapp/main.dart';
+import 'package:flutter/animation.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:mysql1/mysql1.dart';
 import 'dart:async';
 
@@ -22,7 +25,7 @@ class retrieveFeedbackList {
     Future main() async{
       // Open a connection (testdb should already exist)
       final conn = await MySqlConnection.connect(ConnectionSettings(
-          host: '192.168.8.103', port: 3306, user: 'aim', password: '12345678', db: 'alumniapp'));
+          host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
       // Query the database using a parameterized query
       var results = await conn
           .query('SELECT `ID`, `GraduateID`, `title` FROM `feedback` WHERE GraduateID=?', [graduateID]);
@@ -44,7 +47,7 @@ class insertNewFeedback{
     Future main() async{
       // Open a connection (testdb should already exist)
       final conn = await MySqlConnection.connect(ConnectionSettings(
-          host: '192.168.8.103', port: 3306, user: 'aim', password: '12345678', db: 'alumniapp'));
+          host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
       // Query the database using a parameterized query
       var results = await conn
           .query('INSERT INTO `feedback` (`ID`, `GraduateID`, `title`) VALUES (?, ?, ?)', [Null,studentID,title]);
@@ -60,6 +63,7 @@ class Chat{
   String From;
   String To;
   String Message;
+  final ScrollController listScrollController = new ScrollController();
 
   Chat(int id,int feedbackID,String from,String to,String Message){
     this.ID = id;
@@ -73,12 +77,13 @@ class Chat{
     Future main() async{
       // Open a connection (testdb should already exist)
       final conn = await MySqlConnection.connect(ConnectionSettings(
-          host: '192.168.8.103', port: 3306, user: 'aim', password: '12345678', db: 'alumniapp'));
+          host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
       // Query the database using a parameterized query
       var results = await conn
           .query('INSERT INTO `feedbackchat` (`ID`, `feedbackID`, `message`, `message_source`, `message_destination`) VALUES (NULL, ?, ?, ?, ?)', [feedbackID,this.Message,this.From,this.To]);
       await conn.close();
     }
+    //listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
     main();
   }
 }
@@ -90,7 +95,7 @@ class retrieveChat {
     Future main() async{
       // Open a connection (testdb should already exist)
       final conn = await MySqlConnection.connect(ConnectionSettings(
-          host: '192.168.8.103', port: 3306, user: 'aim', password: '12345678', db: 'alumniapp'));
+          host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
       // Query the database using a parameterized query
       var results = await conn
           .query('SELECT `ID`, `feedbackID`, `message`, `message_source`, `message_destination` FROM `feedbackchat`');
