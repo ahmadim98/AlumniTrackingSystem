@@ -20,7 +20,6 @@ class chat extends StatefulWidget {
 class _chatState extends State<chat> {
   final TextEditingController textEditingController = new TextEditingController();
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +68,7 @@ class _chatState extends State<chat> {
                           color: greyColor, borderRadius: BorderRadius.circular(8.0)),
                       margin: EdgeInsets.only(bottom: 20.0, left: 10.0),
                     );
-                  }
+                  };
                 }return Container();
               },
             ),
@@ -119,12 +118,11 @@ class _chatState extends State<chat> {
               child: new IconButton(
                 icon: new Icon(Icons.send),
                 onPressed: () {
-                  setState(() {
-                    print(textEditingController.text);
-                    Chat ch = new Chat(-1,widget.feedbackID,widget.studentID.toString(),"1",textEditingController.text);
-                    ch.sendChat(widget.feedbackID);
-                    textEditingController.clear();// Clear the Text area
-                  });
+                  print(textEditingController.text);
+                  Chat ch = new Chat(-1,widget.feedbackID,widget.studentID.toString(),"1",textEditingController.text);
+                  ch.sendChat(widget.feedbackID);
+                  textEditingController.clear();     // Clear the Text area
+                  setState(() {});
                 },
                 color: primaryColor,
               ),
