@@ -52,6 +52,7 @@ class RootPage extends StatelessWidget {
               icon: Icon(Icons.add_circle),
               onPressed: () {
                 addNewChat = true;
+                (context as Element).reassemble();
               },
             ),
           ],
@@ -113,12 +114,17 @@ class RootPage extends StatelessWidget {
                                   onPressed: (){
                                     insertNewFeedback newFeedback = new insertNewFeedback(nameOfNewFeedback);
                                     addNewChat = false;
+                                    Timer timer = new Timer(new Duration(seconds: 1), () {
+                                      fdlist = new retrieveFeedbackList(studentID);
+                                      (context as Element).reassemble();
+                                    });
                                   },
                                 ),
                                 new RaisedButton(
                                   child: new Text('Cancel'),
                                   onPressed: (){
                                     addNewChat = false;
+                                    (context as Element).reassemble();
                                   },
                                 ),
                               ],
@@ -377,40 +383,46 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     return Scaffold(
-      body: Center(
+      body: CustomScrollView(
+        slivers: <Widget>[
+      SliverToBoxAdapter(
+          child: Center(
 
-        child: Container(
-          color: Colors.white,
-          child: Padding(
-            padding: const EdgeInsets.all(36.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                SizedBox(
-                  height: 155.0,
-                  child: Image.asset(
-                    "assets/logo.png",
-                    fit: BoxFit.contain,
+          child: Container(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(36.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 155.0,
+                    child: Image.asset(
+                      "assets/logo.png",
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
-                SizedBox(height: 45.0),
-                emailField,
+                  SizedBox(height: 45.0),
+                  emailField,
 
-                SizedBox(height: 25.0),
-                passwordField,
-                SizedBox(
-                  height: 35.0,
-                ),
-                loginButon,
-                SizedBox(
-                  height: 15.0,
-                ),
-              ],
+                  SizedBox(height: 25.0),
+                  passwordField,
+                  SizedBox(
+                    height: 35.0,
+                  ),
+                  loginButon,
+                  SizedBox(
+                    height: 15.0,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
+    ],
+    ),
     );
   }
 }

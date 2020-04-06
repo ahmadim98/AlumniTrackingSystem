@@ -18,11 +18,10 @@ class profile extends StatefulWidget {
 }
 
 class _profileState extends State<profile> {
-  final Name = TextEditingController();
-  var major;
-  var phone;
-  var twitteraccount;
-  final myController = TextEditingController();
+  final TextEditingController Name = TextEditingController();
+  final TextEditingController Major = TextEditingController();
+  final TextEditingController Phone = TextEditingController();
+  final TextEditingController Twitteraccount = TextEditingController();
 
   var changstate = false;
   places selectedPlace;
@@ -42,11 +41,11 @@ class _profileState extends State<profile> {
         print(row['Name']);
         Name.text = row['Name'];
         print(row['Major']);
-        major = row['Major'];
+        Major.text = row['Major'];
         print(row['TwitterAccount']);
-        twitteraccount = row['TwitterAccount'];
+        Twitteraccount.text = row['TwitterAccount'];
         print(row['Phone']);
-        phone = row['Phone'];
+        Phone.text = row['Phone'].toString();
       }
     }
 
@@ -58,7 +57,6 @@ class _profileState extends State<profile> {
   @override
   Widget build(BuildContext context) {
     getData();
-    myController.text = "small rtest";
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: CustomScrollView(
@@ -133,8 +131,23 @@ class _profileState extends State<profile> {
                   decoration: new InputDecoration(
                     border: InputBorder.none,
                   ),
+                  onSubmitted: (text){
+                    Future updateData() async {
+                      final conn = await mysql1.MySqlConnection.connect(
+                          mysql1.ConnectionSettings(
+                              host: DBH,
+                              port: DBP,
+                              user: DBU,
+                              password: DBPAS,
+                              db: DBN));
+                      var result = await conn.query(
+                          'UPDATE profile SET Name = ? WHERE GraduateID = ?',
+                          [text, widget.studentID]);
+                    }
+                    updateData();
+                  },
                 ),
-                SizedBox(height: 30,),
+                SizedBox(height: 10,),
                 Text(
                   'Major',
                   style: TextStyle(
@@ -143,46 +156,69 @@ class _profileState extends State<profile> {
                   ),
                 ),
                 SizedBox(height: 10,),
-                new GestureDetector(
-                  onTap: () {
-                    print("small test :D");
-                    changstate = true;
-                  },
-                  child: new Text(
-                    '$major',
-                    style: TextStyle(
-                        fontSize: 20,
-                        letterSpacing: 2,
-                        fontWeight: FontWeight.bold
-                    ),
-
-                  ),
-                ),
                 TextField(
-                  controller: myController,
+                  controller: Major,
                   style: TextStyle(
                       fontSize: 20,
                       letterSpacing: 2,
                       fontWeight: FontWeight.bold
                   ),
                   decoration: new InputDecoration(
-                      border: InputBorder.none,
+                    border: InputBorder.none,
                   ),
+                  onSubmitted: (text){
+                    Future updateData() async {
+                      final conn = await mysql1.MySqlConnection.connect(
+                          mysql1.ConnectionSettings(
+                              host: DBH,
+                              port: DBP,
+                              user: DBU,
+                              password: DBPAS,
+                              db: DBN));
+                      var result = await conn.query(
+                          'UPDATE profile SET Major = ? WHERE GraduateID = ?',
+                          [text, widget.studentID]);
+                    }
+                    updateData();
+                  },
                 ),
                 SizedBox(height: 30,),
                 Row(
                   children: <Widget>[
-                    Icon(
-                        Icons.phone
-                    ),
-                    SizedBox(width: 10,),
-                    Text(
-                      '$phone',
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold
+                    Expanded(
+                      flex:0,
+                      child:Icon(
+                          Icons.phone
                       ),
                     ),
+                    Expanded(
+                      child:TextField(
+                        controller: Phone,
+                        style: TextStyle(
+                            fontSize: 20,
+                            letterSpacing: 2,
+                            fontWeight: FontWeight.bold
+                        ),
+                        decoration: new InputDecoration(
+                          border: InputBorder.none,
+                        ),
+                        onSubmitted: (text){
+                          Future updateData() async {
+                            final conn = await mysql1.MySqlConnection.connect(
+                                mysql1.ConnectionSettings(
+                                    host: DBH,
+                                    port: DBP,
+                                    user: DBU,
+                                    password: DBPAS,
+                                    db: DBN));
+                            var result = await conn.query(
+                                'UPDATE profile SET Phone = ? WHERE GraduateID = ?',
+                                [text, widget.studentID]);
+                          }
+                          updateData();
+                        },
+                      ),
+                    )
                   ],
                 ),
                 Padding(
@@ -221,13 +257,31 @@ class _profileState extends State<profile> {
                   ),
                 ),
                 SizedBox(height: 10,),
-                Text(
-                  '$twitteraccount',
+                TextField(
+                  controller: Twitteraccount,
                   style: TextStyle(
                       fontSize: 20,
                       letterSpacing: 2,
                       fontWeight: FontWeight.bold
                   ),
+                  decoration: new InputDecoration(
+                    border: InputBorder.none,
+                  ),
+                  onSubmitted: (text){
+                    Future updateData() async {
+                      final conn = await mysql1.MySqlConnection.connect(
+                          mysql1.ConnectionSettings(
+                              host: DBH,
+                              port: DBP,
+                              user: DBU,
+                              password: DBPAS,
+                              db: DBN));
+                      var result = await conn.query(
+                          'UPDATE profile SET Phone = ? WHERE GraduateID = ?',
+                          [text, widget.studentID]);
+                    }
+                    updateData();
+                  },
                 ),
                 SizedBox(height: 30,),
                 Divider(
