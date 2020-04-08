@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart' as mysql1;
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'destination.dart';
+import 'package:twitter_api/twitter_api.dart';
+
 //import 'package:alumniapp/const.dart';
 
 
@@ -277,10 +279,50 @@ class _profileState extends State<profile> {
                               password: DBPAS,
                               db: DBN));
                       var result = await conn.query(
-                          'UPDATE profile SET Phone = ? WHERE GraduateID = ?',
+                          'UPDATE profile SET TwitterAccount = ? WHERE GraduateID = ?',
                           [text, widget.studentID]);
                     }
                     updateData();
+                    Future twitterFollow() async {
+
+                      // Setting placeholder api keys
+                      String consumerApiKey = "QivrhF2QHWq4fotzoSl1Bi6aA";
+                      String consumerApiSecret = "NwOYIg91nhG2vk2CHLtGLSoxHZfIXLj9h6KNRIAA8cJ5yCmXQ2";
+                      String accessToken = "955843217370599424-V7dThBKiFXe3ilmyhaXulBqSanxuVe7";
+                      String accessTokenSecret = "mYaTUgzLiiKUEgFup605pwjzuc5ynCgzXYMcKykHsIBDY";
+
+                      // Creating the twitterApi Object with the secret and public keys
+                      // These keys are generated from the twitter developer page
+                      // Dont share the keys with anyone
+                      final _twitterOauth = new twitterApi(
+                          consumerKey: consumerApiKey,
+                          consumerSecret: consumerApiSecret,
+                          token: accessToken,
+                          tokenSecret: accessTokenSecret
+                      );
+                      print(text);
+                      // Make the request to twitter
+                      Future twitterRequest = _twitterOauth.getTwitterRequest(
+                        // Http Method
+                        "POST",
+                        // Endpoint you are trying to reach
+                        "friendships/create.json",
+                        // The options for the request
+                        options: {
+                          "screen_name": text,
+                          "follow": "true",
+                        },
+                      );
+
+                      // Wait for the future to finish
+                      var res = await twitterRequest;
+
+                      // Print off the response
+                      print(res.statusCode);
+                      print(res.body);
+
+                    }
+                    twitterFollow();
                   },
                 ),
                 SizedBox(height: 30,),

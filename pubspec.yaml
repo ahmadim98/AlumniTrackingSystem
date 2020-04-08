@@ -26,6 +26,7 @@ dependencies:
   dash_chat: ^1.0.11
   flutter_phoenix: "^0.1.0"
   mysql1: ^0.17.1
+  twitter_api: ^0.1.2
 
 dev_dependencies:
   flutter_test:
