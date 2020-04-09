@@ -31,6 +31,7 @@ class _profileState extends State<profile> {
   bool startDateSelected = false;
   bool endDateSelected = false;
   final List<experience> exper = new List();
+  String jobTitle;
 
   var changstate = false;
   places selectedPlace;
@@ -260,6 +261,7 @@ class _profileState extends State<profile> {
                       icon: Icon(Icons.add_circle),
                       onPressed: () {
                         addExperience = true;
+                        (context as Element).reassemble();
                       },
                     ),
                   ],
@@ -298,7 +300,9 @@ class _profileState extends State<profile> {
                                 decoration: InputDecoration(
                                     border: InputBorder.none,
                                     hintText: 'Enter Here'),
-                                onChanged: (job) {},
+                                onChanged: (job) {
+                                  jobTitle = job;
+                                },
                               ),
                               Text(
                                 'Start Date',
@@ -307,22 +311,26 @@ class _profileState extends State<profile> {
                                   fontSize: 18,
                                 ),
                               ),
-                              Visibility(
-                                child: Text(
-                                  '${sDate.toString()}',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                              Row(
+                                children: <Widget>[
+                                  Visibility(
+                                    child: Text(
+                                      '${intl.DateFormat.yMd('en_US').format(sDate)}',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    visible: startDateSelected,
                                   ),
-                                ),
-                                visible: startDateSelected,
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  selectStartDate(context);
-                                },
-                                icon: Icon(Icons.calendar_today),
+                                  IconButton(
+                                    onPressed: () {
+                                      selectStartDate(context);
+                                    },
+                                    icon: Icon(Icons.calendar_today),
+                                  ),
+                                ],
                               ),
                               Text(
                                 'End Date',
@@ -331,22 +339,26 @@ class _profileState extends State<profile> {
                                   fontSize: 18,
                                 ),
                               ),
-                              Visibility(
-                                child: Text(
-                                  '${eDate.toString()}',
-                                  style: TextStyle(
-                                    color: Colors.black,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.bold,
+                              Row(
+                                children: <Widget>[
+                                  Visibility(
+                                    child: Text(
+                                      '${intl.DateFormat.yMd('en_US').format(eDate)}',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    visible: endDateSelected,
                                   ),
-                                ),
-                                visible: endDateSelected,
-                              ),
-                              IconButton(
-                                onPressed: () {
-                                  selectEndDate(context, sDate);
-                                },
-                                icon: Icon(Icons.calendar_today),
+                                  IconButton(
+                                    onPressed: () {
+                                      selectEndDate(context, sDate);
+                                    },
+                                    icon: Icon(Icons.calendar_today),
+                                  ),
+                                ],
                               ),
                               ButtonBar(
                                 mainAxisSize: MainAxisSize.min,
@@ -355,9 +367,17 @@ class _profileState extends State<profile> {
                                   new RaisedButton(
                                     child: new Text('Add'),
                                     onPressed: () {
+                                      insertNewEper(
+                                          jobTitle,
+                                          '${sDate.year.toString()}-${sDate.month.toString()}-${sDate.day.toString()}',
+                                          '${eDate.year.toString()}-${eDate.month.toString()}-${eDate.day.toString()}',
+                                          widget.studentID);
                                       addExperience = false;
                                       startDateSelected = false;
                                       endDateSelected = false;
+                                      sDate = new DateTime.now();
+                                      eDate = new DateTime.now();
+                                      (context as Element).reassemble();
                                     },
                                   ),
                                   new RaisedButton(
@@ -366,6 +386,9 @@ class _profileState extends State<profile> {
                                       addExperience = false;
                                       startDateSelected = false;
                                       endDateSelected = false;
+                                      sDate = new DateTime.now();
+                                      eDate = new DateTime.now();
+                                      (context as Element).reassemble();
                                     },
                                   ),
                                 ],
@@ -378,7 +401,9 @@ class _profileState extends State<profile> {
                   ),
                   visible: addExperience,
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
               ],
             ),
           ),
@@ -386,11 +411,9 @@ class _profileState extends State<profile> {
         SliverList(
           delegate: SliverChildBuilderDelegate(
             (BuildContext context, int index) {
-              print('${exper.length} 333');
               if (index < exper.length) {
-                print('object');
                 return Card(
-                  margin: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                  margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
                   child: Padding(
                     padding: const EdgeInsets.all(7.0),
                     child: Wrap(
@@ -401,25 +424,43 @@ class _profileState extends State<profile> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Text(
-                              'Job Title:',
-                              style: TextStyle(
-                                fontSize: 18,
-                                letterSpacing: 2,
-                              ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              '${exper[index].jobTitle}',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  letterSpacing: 2,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 10,
+                            Row(
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    Text(
+                                      'Job Title:',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        letterSpacing: 2,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      '${exper[index].jobTitle}',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          letterSpacing: 2,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  width: 230,
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () {
+                                    deleteExper('${exper[index].jobTitle}', '${exper[index].startDate.year}-${exper[index].startDate.month}-${exper[index].startDate.day}', '${exper[index].endDate.year}-${exper[index].endDate.month}-${exper[index].endDate.day}', widget.studentID);
+                                    (context as Element).reassemble();
+                                  },
+                                ),
+                              ],
                             ),
                             Row(
                               // mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -513,7 +554,7 @@ class _profileState extends State<profile> {
   Future<Null> selectEndDate(BuildContext context, sDate) async {
     final DateTime piked = await showDatePicker(
       context: context,
-      initialDate: sDate,
+      initialDate: eDate,
       firstDate: sDate,
       lastDate: new DateTime.now(),
     );
@@ -566,4 +607,27 @@ class experience {
     this.startDate = startDate;
     this.endDate = endDate;
   }
+}
+
+Future insertNewEper(
+    String jobTitle, String sDate, String eDate, int studentID) async {
+  // Open a connection (testdb should already exist)
+  final conn = await mysql1.MySqlConnection.connect(mysql1.ConnectionSettings(
+      host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
+  // Query the database using a parameterized query
+  var results = await conn.query(
+      'insert into experience (Job_title, Start_Date, End_Date, GraduateID) VALUES (?, ?, ?, ?)',
+      ['$jobTitle', '$sDate', '$eDate', studentID]);
+  await conn.close();
+}
+
+Future deleteExper(
+    String jobTitle, String sDate, String eDate, int studentID) async {
+  // Open a connection (testdb should already exist)
+  final conn = await mysql1.MySqlConnection.connect(mysql1.ConnectionSettings(
+      host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
+  // Query the database using a parameterized query
+  var results = await conn.query(
+      'DELETE FROM `experience` WHERE `Job_title` = $jobTitle AND `Start_Date` = $sDate AND `End_Date` = $eDate AND `GraduateID` = $studentID');
+  await conn.close();
 }
