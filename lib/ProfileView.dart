@@ -1,15 +1,13 @@
-import 'dart:math';
-
-import 'package:alumniapp/CONDBINFO.dart';
+import 'dart:async';
+import 'package:alumniapp/AlumniView.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:mysql1/mysql1.dart' as mysql1;
 import 'package:flutter_phoenix/flutter_phoenix.dart';
-import 'destination.dart';
-import 'package:twitter_api/twitter_api.dart';
-
-//import 'package:alumniapp/const.dart';
+import 'Destination.dart';
 import 'package:intl/intl.dart' as intl;
+
+import 'AlumniController.dart';
+
 
 class profile extends StatefulWidget {
   const profile({ Key key, this.destination , @required this.studentID}) : super(key: key);
@@ -22,66 +20,39 @@ class profile extends StatefulWidget {
 }
 
 class _profileState extends State<profile> {
+  //here is the controllers which will control our text fields and edit them.
   final TextEditingController Name = TextEditingController();
   final TextEditingController Major = TextEditingController();
   final TextEditingController Phone = TextEditingController();
   final TextEditingController Twitteraccount = TextEditingController();
+
+  //these state indicate either we need to show specific widgets or not
   bool addExperience = false;
   bool startDateSelected = false;
   bool endDateSelected = false;
-  final List<experience> exper = new List();
+
+  Profile profile = new Profile(studentID);
+  List<Experience> experiences = new List();
+
   String jobTitle;
-  var changstate = false;
   places selectedPlace;
 
-    Future getData() async {
-      final conn = await mysql1.MySqlConnection.connect(
-          mysql1.ConnectionSettings(
-              host: DBH,
-              port: DBP,
-              user: DBU,
-              password: DBPAS,
-              db: DBN));
-      var results = await conn
-          .query('select * from profile where GraduateID = ?', [widget.studentID]);
-      for (var row in results) {
-        print(row['Name']);
-        Name.text = row['Name'];
-        print(row['Major']);
-        Major.text = row['Major'];
-        print(row['TwitterAccount']);
-        Twitteraccount.text = row['TwitterAccount'];
-        print(row['Phone']);
-        Phone.text = row['Phone'].toString();
-      }
-    }
-
-  Future getExper() async {
-    // Open a connection (testdb should already exist)
-    final conn = await mysql1.MySqlConnection.connect(mysql1.ConnectionSettings(
-        host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
-    // Query the database using a parameterized query
-    var results = await conn.query(
-        'SELECT * FROM `experience` WHERE GraduateID=?', [widget.studentID]);
-    exper.clear();
-    for (var col in results) {
-      experience exp = new experience(col[0], col[1], col[2], col[3]);
-
-      this.exper.add(exp);
-    }
-    await conn.close();
-    print('${exper.length}+hiiii ');
+  getProfileData(){
+    Name.text = profile.Name;
+    Major.text = profile.Major;
+    Twitteraccount.text = profile.Twitteraccount;
+    Phone.text = profile.Phone;
+    experiences = profile.Experiences;
   }
+
   @override
   void initState() {
-    getExper();
-    getData();
+    getProfileData();
   }
 
   @override
   Widget build(BuildContext context) {
-    getData();
-    getExper();
+    getProfileData();
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: CustomScrollView(
@@ -158,19 +129,10 @@ class _profileState extends State<profile> {
                     border: InputBorder.none,
                   ),
                   onSubmitted: (text){
-                    Future updateData() async {
-                      final conn = await mysql1.MySqlConnection.connect(
-                          mysql1.ConnectionSettings(
-                              host: DBH,
-                              port: DBP,
-                              user: DBU,
-                              password: DBPAS,
-                              db: DBN));
-                      var result = await conn.query(
-                          'UPDATE profile SET Name = ? WHERE GraduateID = ?',
-                          [text, widget.studentID]);
-                    }
-                    updateData();
+                    profile.editProfile("Name", text, widget.studentID);
+                    Timer timer = new Timer(new Duration(seconds: 3), () {
+                      profile.updateProfile(widget.studentID);
+                    });
                   },
                 ),
                 SizedBox(height: 10,),
@@ -193,19 +155,10 @@ class _profileState extends State<profile> {
                     border: InputBorder.none,
                   ),
                   onSubmitted: (text){
-                    Future updateData() async {
-                      final conn = await mysql1.MySqlConnection.connect(
-                          mysql1.ConnectionSettings(
-                              host: DBH,
-                              port: DBP,
-                              user: DBU,
-                              password: DBPAS,
-                              db: DBN));
-                      var result = await conn.query(
-                          'UPDATE profile SET Major = ? WHERE GraduateID = ?',
-                          [text, widget.studentID]);
-                    }
-                    updateData();
+                    profile.editProfile("Major", text, widget.studentID);
+                    Timer timer = new Timer(new Duration(seconds: 3), () {
+                      profile.updateProfile(widget.studentID);
+                    });
                   },
                 ),
                 SizedBox(height: 30,),
@@ -229,19 +182,10 @@ class _profileState extends State<profile> {
                           border: InputBorder.none,
                         ),
                         onSubmitted: (text){
-                          Future updateData() async {
-                            final conn = await mysql1.MySqlConnection.connect(
-                                mysql1.ConnectionSettings(
-                                    host: DBH,
-                                    port: DBP,
-                                    user: DBU,
-                                    password: DBPAS,
-                                    db: DBN));
-                            var result = await conn.query(
-                                'UPDATE profile SET Phone = ? WHERE GraduateID = ?',
-                                [text, widget.studentID]);
-                          }
-                          updateData();
+                          profile.editProfile("Phone", text, widget.studentID);
+                          Timer timer = new Timer(new Duration(seconds: 3), () {
+                            profile.updateProfile(widget.studentID);
+                          });
                         },
                       ),
                     )
@@ -294,59 +238,11 @@ class _profileState extends State<profile> {
                     border: InputBorder.none,
                   ),
                   onSubmitted: (text){
-                    Future updateData() async {
-                      final conn = await mysql1.MySqlConnection.connect(
-                          mysql1.ConnectionSettings(
-                              host: DBH,
-                              port: DBP,
-                              user: DBU,
-                              password: DBPAS,
-                              db: DBN));
-                      var result = await conn.query(
-                          'UPDATE profile SET TwitterAccount = ? WHERE GraduateID = ?',
-                          [text, widget.studentID]);
-                    }
-                    updateData();
-                    Future twitterFollow() async {
-
-                      // Setting placeholder api keys
-                      String consumerApiKey = "QivrhF2QHWq4fotzoSl1Bi6aA";
-                      String consumerApiSecret = "NwOYIg91nhG2vk2CHLtGLSoxHZfIXLj9h6KNRIAA8cJ5yCmXQ2";
-                      String accessToken = "955843217370599424-V7dThBKiFXe3ilmyhaXulBqSanxuVe7";
-                      String accessTokenSecret = "mYaTUgzLiiKUEgFup605pwjzuc5ynCgzXYMcKykHsIBDY";
-
-                      // Creating the twitterApi Object with the secret and public keys
-                      // These keys are generated from the twitter developer page
-                      // Dont share the keys with anyone
-                      final _twitterOauth = new twitterApi(
-                          consumerKey: consumerApiKey,
-                          consumerSecret: consumerApiSecret,
-                          token: accessToken,
-                          tokenSecret: accessTokenSecret
-                      );
-                      print(text);
-                      // Make the request to twitter
-                      Future twitterRequest = _twitterOauth.getTwitterRequest(
-                        // Http Method
-                        "POST",
-                        // Endpoint you are trying to reach
-                        "friendships/create.json",
-                        // The options for the request
-                        options: {
-                          "screen_name": text,
-                          "follow": "true",
-                        },
-                      );
-
-                      // Wait for the future to finish
-                      var res = await twitterRequest;
-
-                      // Print off the response
-                      print(res.statusCode);
-                      print(res.body);
-
-                    }
-                    twitterFollow();
+                    profile.editProfile("TwitterAccount", text, widget.studentID);
+                    profile.followTwitter(text);
+                    Timer timer = new Timer(new Duration(seconds: 3), () {
+                      profile.updateProfile(widget.studentID);
+                    });
                   },
                 ),
                 Divider(
@@ -479,17 +375,18 @@ class _profileState extends State<profile> {
                                   new RaisedButton(
                                     child: new Text('Add'),
                                     onPressed: () {
-                                      insertNewEper(
-                                          jobTitle,
-                                          '${sDate.year.toString()}-${sDate.month.toString()}-${sDate.day.toString()}',
-                                          '${eDate.year.toString()}-${eDate.month.toString()}-${eDate.day.toString()}',
-                                          widget.studentID);
+                                      Experience experience = new Experience(jobTitle, sDate, eDate, widget.studentID);
+                                      profile.insertNewExperience(experience);
+
                                       addExperience = false;
                                       startDateSelected = false;
                                       endDateSelected = false;
                                       sDate = new DateTime.now();
                                       eDate = new DateTime.now();
-                                      (context as Element).reassemble();
+                                      Timer timer = new Timer(new Duration(seconds: 2), () {
+                                        profile.updateProfile(widget.studentID);
+                                        (context as Element).reassemble();
+                                      });
                                     },
                                   ),
                                   new RaisedButton(
@@ -523,7 +420,7 @@ class _profileState extends State<profile> {
         SliverList(
           delegate: SliverChildBuilderDelegate(
             (BuildContext context, int index) {
-              if (index < exper.length) {
+              if (index < experiences.length) {
                 return Card(
                   margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
                   child: Padding(
@@ -551,7 +448,7 @@ class _profileState extends State<profile> {
                                       height: 10,
                                     ),
                                     Text(
-                                      '${exper[index].jobTitle}',
+                                      '${experiences[index].jobTitle}',
                                       style: TextStyle(
                                           fontSize: 20,
                                           letterSpacing: 2,
@@ -568,8 +465,13 @@ class _profileState extends State<profile> {
                                 IconButton(
                                   icon: Icon(Icons.delete),
                                   onPressed: () {
-                                    deleteExper('${exper[index].jobTitle}', '${exper[index].startDate.year}-${exper[index].startDate.month}-${exper[index].startDate.day}', '${exper[index].endDate.year}-${exper[index].endDate.month}-${exper[index].endDate.day}', widget.studentID);
-                                    (context as Element).reassemble();
+                                    //deleteExper('${experiences[index].jobTitle}', '${experiences[index].startDate.year}-${experiences[index].startDate.month}-${experiences[index].startDate.day}', '${experiences[index].endDate.year}-${experiences[index].endDate.month}-${experiences[index].endDate.day}', widget.studentID);
+                                    Experience experience = new Experience(experiences[index].jobTitle, experiences[index].startDate, experiences[index].endDate, widget.studentID);
+                                    profile.deleteExperience(experience);
+                                    Timer timer = new Timer(new Duration(seconds: 2), () {
+                                      profile.updateProfile(widget.studentID);
+                                      (context as Element).reassemble();
+                                    });
                                   },
                                 ),
                               ],
@@ -590,7 +492,7 @@ class _profileState extends State<profile> {
                                       height: 10,
                                     ),
                                     Text(
-                                      '${intl.DateFormat.yMd('en_US').format(exper[index].startDate)}',
+                                      '${intl.DateFormat.yMd('en_US').format(experiences[index].startDate)}',
                                       style: TextStyle(
                                           fontSize: 20,
                                           letterSpacing: 2,
@@ -614,7 +516,7 @@ class _profileState extends State<profile> {
                                       height: 10,
                                     ),
                                     Text(
-                                      '${intl.DateFormat.yMd('en_US').format(exper[index].endDate)}',
+                                      '${intl.DateFormat.yMd('en_US').format(experiences[index].endDate)}',
                                       style: TextStyle(
                                           fontSize: 20,
                                           letterSpacing: 2,
@@ -635,7 +537,7 @@ class _profileState extends State<profile> {
                 );
               }
             },
-            childCount: exper.length,
+            childCount: experiences.length,
           ),
         ),
       ]),
@@ -686,41 +588,3 @@ class places {
 }
 
 List<places> users = <places>[const places('STC'), const places('Mobaily')];
-
-class experience {
-  int graduateID;
-  String jobTitle;
-  DateTime startDate;
-  DateTime endDate;
-
-  experience(String jobTitle, DateTime startDate, DateTime endDate,
-      int graduateId) {
-    this.graduateID = graduateId;
-    this.jobTitle = jobTitle;
-    this.startDate = startDate;
-    this.endDate = endDate;
-  }
-}
-
-Future insertNewEper(
-    String jobTitle, String sDate, String eDate, int studentID) async {
-  // Open a connection (testdb should already exist)
-  final conn = await mysql1.MySqlConnection.connect(mysql1.ConnectionSettings(
-      host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
-  // Query the database using a parameterized query
-  var results = await conn.query(
-      'insert into experience (Job_title, Start_Date, End_Date, GraduateID) VALUES (?, ?, ?, ?)',
-      ['$jobTitle', '$sDate', '$eDate', studentID]);
-  await conn.close();
-}
-
-Future deleteExper(
-    String jobTitle, String sDate, String eDate, int studentID) async {
-  // Open a connection (testdb should already exist)
-  final conn = await mysql1.MySqlConnection.connect(mysql1.ConnectionSettings(
-      host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
-  // Query the database using a parameterized query
-  var results = await conn.query(
-      'DELETE FROM `experience` WHERE `Job_title` = ? AND `Start_Date` = ? AND `End_Date` = ? AND `GraduateID` = ?',['$jobTitle','$sDate','$eDate','$studentID']);
-  await conn.close();
-}

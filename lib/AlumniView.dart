@@ -9,25 +9,24 @@
 // ![A scaffold with a bottom navigation bar containing three bottom navigation
 // bar items. The first one is selected.](https://flutter.github.io/assets-for-api-docs/assets/material/bottom_navigation_bar.png)
 import 'dart:async';
-import 'package:alumniapp/chat.dart';
+import 'package:alumniapp/ChatView.dart';
 import 'package:flutter/material.dart';
-import 'destination.dart';
-import 'chat.dart';
-import 'profile.dart';
+import 'Destination.dart';
+import 'ChatView.dart';
+import 'ProfileView.dart';
 import 'package:flutter_phoenix/flutter_phoenix.dart';
 import 'Loader.dart';
 
-import 'survey.dart';
-import 'feedback.dart';
-import 'chat_backend.dart';
-import 'user.dart';
-import 'question.dart';
+import 'SurveyView.dart';
+import 'ChatController.dart';
+import 'AlumniController.dart';
+import 'SurveyController.dart';
 
 int studentID;
 const bool loggedin = false;
-retriveFromDB db = new retriveFromDB();
-retrieveFeedbackList fdlist = new retrieveFeedbackList(studentID);
-retrieveChat chatt;
+SurveyController SVController = new SurveyController();
+FeedbackController FDController = new FeedbackController(studentID);
+ChatController CTController;
 bool addNewChat = false;
 
 class RootPage extends StatelessWidget {
@@ -37,7 +36,7 @@ class RootPage extends StatelessWidget {
   Widget _RPage(BuildContext context){
 
     if (destination.page == "feedback" ){
-      chatt = new retrieveChat(studentID);
+      CTController = new ChatController(studentID);
       String nameOfNewFeedback = "";
       return Scaffold(
         appBar: AppBar(
@@ -59,9 +58,9 @@ class RootPage extends StatelessWidget {
         ),
         body: SizedBox.expand(
           child: ListView.builder(
-            itemCount: fdlist.feedbacks.length+1,
+            itemCount: FDController.Feedbacks.length+1,
             itemBuilder: (BuildContext context, int index) {
-              if(index < fdlist.feedbacks.length){
+              if(index < FDController.Feedbacks.length){
                 return SizedBox(
                   height: 100,
                   child: Card(
@@ -70,12 +69,12 @@ class RootPage extends StatelessWidget {
                     color: Colors.white,
                     child: InkWell(
                       onTap: () {
-                        Navigator.pushNamed(context, "/feedback",arguments: {'chat': chatt.chat,'feedbackID': index+1,'feedbackTitle':fdlist.feedbacks[index].title},);
+                        Navigator.pushNamed(context, "/feedback",arguments: {'chat': CTController.chat,'feedbackID': index+1,'feedbackTitle':FDController.Feedbacks[index].title},);
                       },
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[ Text('feedback $index', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
-                          Text('feedback :' + fdlist.feedbacks[index].title, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
+                          Text('feedback :' + FDController.Feedbacks[index].title, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
                           Icon(Icons.chat, color: Colors.lightBlue, size: 20,),
                         ],
 
@@ -112,10 +111,10 @@ class RootPage extends StatelessWidget {
                                 new RaisedButton(
                                   child: new Text('Add'),
                                   onPressed: (){
-                                    insertNewFeedback newFeedback = new insertNewFeedback(nameOfNewFeedback);
+                                    FDController.insertNewFeedback(nameOfNewFeedback);
                                     addNewChat = false;
                                     Timer timer = new Timer(new Duration(seconds: 1), () {
-                                      fdlist = new retrieveFeedbackList(studentID);
+                                      FDController = new FeedbackController(studentID);
                                       (context as Element).reassemble();
                                     });
                                   },
@@ -136,14 +135,14 @@ class RootPage extends StatelessWidget {
                     ),
                   visible:addNewChat,
                 );
-              };
+              }
 
             },
           ),
         ),
       );
     }else if(destination.page == "surveys"){
-      print(db.surveys.length);
+      print(SVController.Surveys.length);
       return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -164,7 +163,7 @@ class RootPage extends StatelessWidget {
         //backgroundColor: destination.color[50],
         body: SizedBox.expand(
           child: ListView.builder(
-            itemCount: db.surveys.length,
+            itemCount: SVController.Surveys.length,
             itemBuilder: (BuildContext context, int index) {
               return SizedBox(
 
@@ -175,11 +174,11 @@ class RootPage extends StatelessWidget {
                   color: Colors.white,
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, "/showsurvey",arguments: db.surveys[index]);
+                      Navigator.pushNamed(context, "/showsurvey",arguments: SVController.Surveys[index]);
                     },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[ Text(db.surveys[index].Surveyname, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
+                      children: <Widget>[ Text(SVController.Surveys[index].Surveyname, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
                         Text('28 People have answered', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20,),),
                         Icon(Icons.done_all, color: Colors.green, size: 20,),
                       ],
@@ -250,7 +249,7 @@ class _DestinationViewState extends State<DestinationView> {
                 return LoginPage(destination: widget.destination);
               case '/feedback':
                 final Map arguments = ModalRoute.of(context).settings.arguments as Map;
-                return chat(chatt: arguments['chat'],studentID: studentID,feedbackID: arguments['feedbackID'],feedbackTitle: arguments['feedbackTitle'],);
+                return ChatRoom(chatt: arguments['chat'],studentID: studentID,feedbackID: arguments['feedbackID'],feedbackTitle: arguments['feedbackTitle'],);
               case '/showsurvey':
                 return showSurvey(destination: widget.destination, surveyy: settings.arguments,studentID: studentID,);
               case 'profile':

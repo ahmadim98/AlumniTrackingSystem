@@ -1,23 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:alumniapp/const.dart';
-import 'dart:async';
-import 'package:flutter/material.dart';
-import 'destination.dart';
-import 'chat_backend.dart';
+import 'Destination.dart';
+import 'ChatController.dart';
 
-class chat extends StatefulWidget {
-  const chat({ Key key, this.destination ,@required this.chatt,@required this.studentID,@required this.feedbackID,@required this.feedbackTitle}) : super(key: key);
+final themeColor = Color(0xfff5a623);
+final primaryColor = Colors.blue;
+final greyColor = Color(0xffaeaeae);
+final greyColor2 = Color(0xffE8E8E8);
+
+class ChatRoom extends StatefulWidget {
+  const ChatRoom({ Key key, this.destination ,@required this.chatt,@required this.studentID,@required this.feedbackID,@required this.feedbackTitle}) : super(key: key);
   final Destination destination;
   final List<Chat> chatt;
   final int studentID;
   final int feedbackID;
   final String feedbackTitle;
   @override
-  _chatState createState() => _chatState();
+  _ChatRoomState createState() => _ChatRoomState();
 }
 
-class _chatState extends State<chat> {
+class _ChatRoomState extends State<ChatRoom> {
   final TextEditingController textEditingController = new TextEditingController();
   List<Chat> chatt;
 

@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'destination.dart';
+import 'Destination.dart';
 
-import 'question.dart';
+import 'SurveyController.dart';
 
 class showSurvey extends StatefulWidget {
   const showSurvey({ Key key, this.destination , @required this.surveyy,@required this.studentID}) : super(key: key);
@@ -86,7 +86,7 @@ class _showSurvey extends State<showSurvey> {
                   answer.SubmitAnswers();
                   counter++;
                 }
-                Timer timer = new Timer(new Duration(seconds: 10), () {
+                Timer timer = new Timer(new Duration(seconds: 3), () {
                   Navigator.pop(context);
                 });
               },
