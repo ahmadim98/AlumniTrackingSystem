@@ -358,14 +358,14 @@ class _LoginPageState extends State<LoginPage> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () {
-          User login = new User(this._studentid,this._password);
+          Alumni login = new Alumni(this._studentid,this._password);
           ColorLoader(
             color1: Colors.green,
             color2: Colors.green,
             color3: Colors.green,
           );
           Timer timer = new Timer(new Duration(seconds: 5), () {
-            bool checkLogin = login.loggedin;
+            bool checkLogin = login.LoggedIn;
             print(checkLogin);
             if(checkLogin && this._studentid==this._password){
               Route route = MaterialPageRoute(builder: (context) => HomePage());

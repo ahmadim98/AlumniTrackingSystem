@@ -3,14 +3,14 @@ import 'dart:async';
 import 'CONDBINFO.dart';
 
 
-class User {
-  int username;
-  int password;
-  bool loggedin;
+class Alumni {
+  int ID;
+  int Password;
+  bool LoggedIn;
 
-  User(int username,int password){
-    this.username = username;
-    this.password = password;
+  Alumni(int ID,int Password){
+    this.ID = ID;
+    this.Password = Password;
 
     int result = 0;
     Future main() async{
@@ -19,16 +19,16 @@ class User {
           host: DBH, port: DBP,  user: DBU, password: DBPAS, db: DBN));
       // Query the database using a parameterized query
       var results = await conn
-          .query('select ID from alumni where ID = ?', [username]);
+          .query('select ID from alumni where ID = ?', [ID]);
 
       for (var col in results) {
         result = col[0];//to get the first result
       }
       print(result);
       if (result == 0){
-        this.loggedin = false;
+        this.LoggedIn = false;
       }else {
-        this.loggedin = true;
+        this.LoggedIn = true;
       }
       await conn.close();
     }

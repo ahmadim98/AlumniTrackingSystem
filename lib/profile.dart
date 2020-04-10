@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:alumniapp/CONDBINFO.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +9,7 @@ import 'destination.dart';
 import 'package:twitter_api/twitter_api.dart';
 
 //import 'package:alumniapp/const.dart';
-
+import 'package:intl/intl.dart' as intl;
 
 class profile extends StatefulWidget {
   const profile({ Key key, this.destination , @required this.studentID}) : super(key: key);
@@ -24,10 +26,13 @@ class _profileState extends State<profile> {
   final TextEditingController Major = TextEditingController();
   final TextEditingController Phone = TextEditingController();
   final TextEditingController Twitteraccount = TextEditingController();
-
+  bool addExperience = false;
+  bool startDateSelected = false;
+  bool endDateSelected = false;
+  final List<experience> exper = new List();
+  String jobTitle;
   var changstate = false;
   places selectedPlace;
-  final TextEditingController textEditingController = new TextEditingController();
 
     Future getData() async {
       final conn = await mysql1.MySqlConnection.connect(
@@ -51,14 +56,32 @@ class _profileState extends State<profile> {
       }
     }
 
-    @override
-    void initState() {
-      getData();
+  Future getExper() async {
+    // Open a connection (testdb should already exist)
+    final conn = await mysql1.MySqlConnection.connect(mysql1.ConnectionSettings(
+        host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
+    // Query the database using a parameterized query
+    var results = await conn.query(
+        'SELECT * FROM `experience` WHERE GraduateID=?', [widget.studentID]);
+    exper.clear();
+    for (var col in results) {
+      experience exp = new experience(col[0], col[1], col[2], col[3]);
+
+      this.exper.add(exp);
     }
+    await conn.close();
+    print('${exper.length}+hiiii ');
+  }
+  @override
+  void initState() {
+    getExper();
+    getData();
+  }
 
   @override
   Widget build(BuildContext context) {
     getData();
+    getExper();
     return Scaffold(
       backgroundColor: Colors.grey[300],
       body: CustomScrollView(
@@ -114,7 +137,9 @@ class _profileState extends State<profile> {
                     letterSpacing: 2,
                   ),
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 /*Text(
                   '$name',
                   style: TextStyle(
@@ -128,8 +153,7 @@ class _profileState extends State<profile> {
                   style: TextStyle(
                       fontSize: 20,
                       letterSpacing: 2,
-                      fontWeight: FontWeight.bold
-                  ),
+                      fontWeight: FontWeight.bold),
                   decoration: new InputDecoration(
                     border: InputBorder.none,
                   ),
@@ -224,7 +248,7 @@ class _profileState extends State<profile> {
                   ],
                 ),
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(10, 30, 30, 0),
+                  padding: const EdgeInsets.fromLTRB(10, 10, 30, 0),
                   child: DropdownButton<places>(
                     hint: Text('Select place'),
                     value: selectedPlace,
@@ -325,77 +349,378 @@ class _profileState extends State<profile> {
                     twitterFollow();
                   },
                 ),
-                SizedBox(height: 30,),
                 Divider(
                   height: 50,
                   color: Colors.grey[600],
                 ),
-                Text(
-                  'Job Title',
-                  style: TextStyle(
-                    fontSize: 18,
-                    letterSpacing: 2,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Center(
+                      child: Text(
+                        'Experience',
+                        style: TextStyle(
+                          fontSize: 25,
+                          letterSpacing: 2,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: 50,
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.add_circle),
+                      onPressed: () {
+                        addExperience = true;
+                        (context as Element).reassemble();
+                      },
+                    ),
+                  ],
                 ),
-                SizedBox(height: 10,),
-                Text(
-                  'Developer',
-                  style: TextStyle(
-                      fontSize: 20,
-                      letterSpacing: 2,
-                      fontWeight: FontWeight.bold
-                  ),
+                SizedBox(
+                  height: 40,
                 ),
-                SizedBox(height: 30,),
-                Text(
-                  'Start Date',
-                  style: TextStyle(
-                    fontSize: 18,
-                    letterSpacing: 2,
+                Visibility(
+                  child: Wrap(
+                    children: <Widget>[
+                      Card(
+                        color: Colors.white,
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              Text(
+                                'Add new Experience',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 20,
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                'Job Title',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              TextField(
+                                decoration: InputDecoration(
+                                    border: InputBorder.none,
+                                    hintText: 'Enter Here'),
+                                onChanged: (job) {
+                                  jobTitle = job;
+                                },
+                              ),
+                              Text(
+                                'Start Date',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Visibility(
+                                    child: Text(
+                                      '${intl.DateFormat.yMd('en_US').format(sDate)}',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    visible: startDateSelected,
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      selectStartDate(context);
+                                    },
+                                    icon: Icon(Icons.calendar_today),
+                                  ),
+                                ],
+                              ),
+                              Text(
+                                'End Date',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              Row(
+                                children: <Widget>[
+                                  Visibility(
+                                    child: Text(
+                                      '${intl.DateFormat.yMd('en_US').format(eDate)}',
+                                      style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    visible: endDateSelected,
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
+                                      selectEndDate(context, sDate);
+                                    },
+                                    icon: Icon(Icons.calendar_today),
+                                  ),
+                                ],
+                              ),
+                              ButtonBar(
+                                mainAxisSize: MainAxisSize.min,
+                                // this will take space as minimum as posible(to center)
+                                children: <Widget>[
+                                  new RaisedButton(
+                                    child: new Text('Add'),
+                                    onPressed: () {
+                                      insertNewEper(
+                                          jobTitle,
+                                          '${sDate.year.toString()}-${sDate.month.toString()}-${sDate.day.toString()}',
+                                          '${eDate.year.toString()}-${eDate.month.toString()}-${eDate.day.toString()}',
+                                          widget.studentID);
+                                      addExperience = false;
+                                      startDateSelected = false;
+                                      endDateSelected = false;
+                                      sDate = new DateTime.now();
+                                      eDate = new DateTime.now();
+                                      (context as Element).reassemble();
+                                    },
+                                  ),
+                                  new RaisedButton(
+                                    child: new Text('Cancel'),
+                                    onPressed: () {
+                                      addExperience = false;
+                                      startDateSelected = false;
+                                      endDateSelected = false;
+                                      sDate = new DateTime.now();
+                                      eDate = new DateTime.now();
+                                      (context as Element).reassemble();
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
+                  visible: addExperience,
                 ),
-                SizedBox(height: 10,),
-                Text(
-                  '7/8/2015',
-                  style: TextStyle(
-                      fontSize: 20,
-                      letterSpacing: 2,
-                      fontWeight: FontWeight.bold
-                  ),
+                SizedBox(
+                  height: 10,
                 ),
-                SizedBox(height: 30,),
-                Text(
-                  'End Date',
-                  style: TextStyle(
-                    fontSize: 18,
-                    letterSpacing: 2,
-                  ),
-                ),
-                SizedBox(height: 10,),
-                Text(
-                  '1/5/2018',
-                  style: TextStyle(
-                      fontSize: 20,
-                      letterSpacing: 2,
-                      fontWeight: FontWeight.bold
-                  ),
-                ),
-                SizedBox(height: 30,),
               ],
             ),
           ),
         ),
-      ]
-      ),
+        SliverList(
+          delegate: SliverChildBuilderDelegate(
+            (BuildContext context, int index) {
+              if (index < exper.length) {
+                return Card(
+                  margin: EdgeInsets.fromLTRB(10, 0, 10, 10),
+                  child: Padding(
+                    padding: const EdgeInsets.all(7.0),
+                    child: Wrap(
+                      direction: Axis.horizontal,
+                      textDirection: TextDirection.ltr,
+                      alignment: WrapAlignment.spaceEvenly,
+                      children: <Widget>[
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Row(
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    Text(
+                                      'Job Title:',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        letterSpacing: 2,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      '${exper[index].jobTitle}',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          letterSpacing: 2,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  width: 230,
+                                ),
+                                IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () {
+                                    deleteExper('${exper[index].jobTitle}', '${exper[index].startDate.year}-${exper[index].startDate.month}-${exper[index].startDate.day}', '${exper[index].endDate.year}-${exper[index].endDate.month}-${exper[index].endDate.day}', widget.studentID);
+                                    (context as Element).reassemble();
+                                  },
+                                ),
+                              ],
+                            ),
+                            Row(
+                              // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Column(
+                                  children: <Widget>[
+                                    Text(
+                                      'Start Date:',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        letterSpacing: 2,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      '${intl.DateFormat.yMd('en_US').format(exper[index].startDate)}',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          letterSpacing: 2,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  width: 10,
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    Text(
+                                      'End Date',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        letterSpacing: 2,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: 10,
+                                    ),
+                                    Text(
+                                      '${intl.DateFormat.yMd('en_US').format(exper[index].endDate)}',
+                                      style: TextStyle(
+                                          fontSize: 20,
+                                          letterSpacing: 2,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(
+                          width: 10,
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }
+            },
+            childCount: exper.length,
+          ),
+        ),
+      ]),
     );
   }
+
+  //Start Date
+  DateTime sDate = new DateTime.now();
+
+  //End Date
+  DateTime eDate = new DateTime.now();
+
+  Future<Null> selectStartDate(BuildContext context) async {
+    final DateTime piked = await showDatePicker(
+      context: context,
+      initialDate: sDate,
+      firstDate: new DateTime(1950),
+      lastDate: new DateTime.now(),
+    );
+    if (piked != null && piked != sDate) {
+      setState(() {
+        sDate = piked;
+        startDateSelected = true;
+      });
+    }
+  }
+
+  Future<Null> selectEndDate(BuildContext context, sDate) async {
+    final DateTime piked = await showDatePicker(
+      context: context,
+      initialDate: eDate,
+      firstDate: sDate,
+      lastDate: new DateTime.now(),
+    );
+    if (piked != null && piked != sDate) {
+      setState(() {
+        eDate = piked;
+        endDateSelected = true;
+      });
+    }
+  }
 }
-class places{
+
+class places {
   const places(this.name);
+
   final String name;
 }
-List <places> users=<places>[
-  const places('STC'),
-  const places('Mobaily')
 
-];
+List<places> users = <places>[const places('STC'), const places('Mobaily')];
+
+class experience {
+  int graduateID;
+  String jobTitle;
+  DateTime startDate;
+  DateTime endDate;
+
+  experience(String jobTitle, DateTime startDate, DateTime endDate,
+      int graduateId) {
+    this.graduateID = graduateId;
+    this.jobTitle = jobTitle;
+    this.startDate = startDate;
+    this.endDate = endDate;
+  }
+}
+
+Future insertNewEper(
+    String jobTitle, String sDate, String eDate, int studentID) async {
+  // Open a connection (testdb should already exist)
+  final conn = await mysql1.MySqlConnection.connect(mysql1.ConnectionSettings(
+      host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
+  // Query the database using a parameterized query
+  var results = await conn.query(
+      'insert into experience (Job_title, Start_Date, End_Date, GraduateID) VALUES (?, ?, ?, ?)',
+      ['$jobTitle', '$sDate', '$eDate', studentID]);
+  await conn.close();
+}
+
+Future deleteExper(
+    String jobTitle, String sDate, String eDate, int studentID) async {
+  // Open a connection (testdb should already exist)
+  final conn = await mysql1.MySqlConnection.connect(mysql1.ConnectionSettings(
+      host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
+  // Query the database using a parameterized query
+  var results = await conn.query(
+      'DELETE FROM `experience` WHERE `Job_title` = ? AND `Start_Date` = ? AND `End_Date` = ? AND `GraduateID` = ?',['$jobTitle','$sDate','$eDate','$studentID']);
+  await conn.close();
+}
