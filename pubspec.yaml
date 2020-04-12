@@ -28,9 +28,15 @@ dependencies:
   mysql1: ^0.17.1
   twitter_api: ^0.1.2
 
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
+  test:
+
+
+
 
 
 # For information on the generic Dart part of this file, see the
