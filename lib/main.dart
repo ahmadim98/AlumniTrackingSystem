@@ -31,12 +31,12 @@ retrieveChat chatt;
 bool addNewChat = false;
 
 class RootPage extends StatelessWidget {
-  const RootPage({Key key, this.destination}) : super(key: key);
+  const RootPage({ Key key, this.destination }) : super(key: key);
 
   final Destination destination;
+  Widget _RPage(BuildContext context){
 
-  Widget _RPage(BuildContext context) {
-    if (destination.page == "feedback") {
+    if (destination.page == "feedback" ){
       chatt = new retrieveChat(studentID);
       String nameOfNewFeedback = "";
       return Scaffold(
@@ -52,133 +52,97 @@ class RootPage extends StatelessWidget {
               icon: Icon(Icons.add_circle),
               onPressed: () {
                 addNewChat = true;
+                (context as Element).reassemble();
               },
             ),
           ],
         ),
         body: SizedBox.expand(
           child: ListView.builder(
-            itemCount: fdlist.feedbacks.length + 1,
+            itemCount: fdlist.feedbacks.length+1,
             itemBuilder: (BuildContext context, int index) {
-              if (index < fdlist.feedbacks.length) {
+              if(index < fdlist.feedbacks.length){
                 return SizedBox(
                   height: 100,
                   child: Card(
                     //margin: EdgeInsets.all(5),
-                    margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                    margin: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
                     color: Colors.white,
                     child: InkWell(
                       onTap: () {
-                        Navigator.pushNamed(
-                          context,
-                          "/feedback",
-                          arguments: {
-                            'chat': chatt.chat,
-                            'feedbackID': index + 1,
-                            'feedbackTitle': fdlist.feedbacks[index].title
-                          },
-                        );
+                        Navigator.pushNamed(context, "/feedback",arguments: {'chat': chatt.chat,'feedbackID': index+1,'feedbackTitle':fdlist.feedbacks[index].title},);
                       },
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'feedback $index',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              fontSize: 28,
-                            ),
-                          ),
-                          Text(
-                            'feedback :' + fdlist.feedbacks[index].title,
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              fontSize: 28,
-                            ),
-                          ),
-                          Icon(
-                            Icons.chat,
-                            color: Colors.lightBlue,
-                            size: 20,
-                          ),
+                        children: <Widget>[ Text('feedback $index', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
+                          Text('feedback :' + fdlist.feedbacks[index].title, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
+                          Icon(Icons.chat, color: Colors.lightBlue, size: 20,),
                         ],
+
                       ),
+
                     ),
                   ),
                 );
-              } else {
+              }else{
                 return Visibility(
-                  child: SizedBox(
-                    height: 205,
-                    child: Card(
-                      //margin: EdgeInsets.all(5),
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                      color: Colors.white,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            'Open new Feedback',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                              fontSize: 28,
-                            ),
-                          ),
-                          Icon(
-                            Icons.mail,
-                            color: Colors.green,
-                            size: 20,
-                          ),
-                          Text(
-                            'Set the name of feedback',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 22,
-                            ),
-                          ),
-                          TextField(
-                            decoration: InputDecoration(
-                                border: InputBorder.none,
-                                hintText: 'Enter Here'),
-                            onChanged: (str) {
-                              nameOfNewFeedback = str;
-                            },
-                          ),
-                          ButtonBar(
-                            mainAxisSize: MainAxisSize.min,
-                            // this will take space as minimum as posible(to center)
-                            children: <Widget>[
-                              new RaisedButton(
-                                child: new Text('Add'),
-                                onPressed: () {
-                                  insertNewFeedback newFeedback =
-                                      new insertNewFeedback(nameOfNewFeedback);
-                                  addNewChat = false;
-                                },
+                  child:SizedBox(
+                      height: 205,
+                      child: Card(
+                        //margin: EdgeInsets.all(5),
+                        margin: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
+                        color: Colors.white,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[Text('Open new Feedback', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
+                            Icon(Icons.mail, color: Colors.green, size: 20,),
+                            Text('Set the name of feedback', style: TextStyle(color: Colors.black, fontSize: 22,),),
+                            TextField(
+                              decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                  hintText: 'Enter Here'
                               ),
-                              new RaisedButton(
-                                child: new Text('Cancel'),
-                                onPressed: () {
-                                  addNewChat = false;
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
+                              onChanged: (str) {
+                                nameOfNewFeedback = str;
+                              },
+                            ),
+                            ButtonBar(
+                              mainAxisSize: MainAxisSize.min, // this will take space as minimum as posible(to center)
+                              children: <Widget>[
+                                new RaisedButton(
+                                  child: new Text('Add'),
+                                  onPressed: (){
+                                    insertNewFeedback newFeedback = new insertNewFeedback(nameOfNewFeedback);
+                                    addNewChat = false;
+                                    Timer timer = new Timer(new Duration(seconds: 1), () {
+                                      fdlist = new retrieveFeedbackList(studentID);
+                                      (context as Element).reassemble();
+                                    });
+                                  },
+                                ),
+                                new RaisedButton(
+                                  child: new Text('Cancel'),
+                                  onPressed: (){
+                                    addNewChat = false;
+                                    (context as Element).reassemble();
+                                  },
+                                ),
+                              ],
+                            ),
+                          ],
+
+                        ),
                       ),
                     ),
-                  ),
-                  visible: addNewChat,
+                  visible:addNewChat,
                 );
               };
+
             },
           ),
         ),
       );
-    } else if (destination.page == "surveys") {
+    }else if(destination.page == "surveys"){
       print(db.surveys.length);
       return Scaffold(
         appBar: AppBar(
@@ -203,42 +167,25 @@ class RootPage extends StatelessWidget {
             itemCount: db.surveys.length,
             itemBuilder: (BuildContext context, int index) {
               return SizedBox(
+
                 height: 100,
                 child: Card(
                   //margin: EdgeInsets.all(5),
-                  margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                  margin: EdgeInsets.symmetric(vertical: 5,horizontal: 10),
                   color: Colors.white,
                   child: InkWell(
                     onTap: () {
-                      Navigator.pushNamed(context, "/showsurvey",
-                          arguments: db.surveys[index]);
+                      Navigator.pushNamed(context, "/showsurvey",arguments: db.surveys[index]);
                     },
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          db.surveys[index].Surveyname,
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontSize: 28,
-                          ),
-                        ),
-                        Text(
-                          '28 People have answered',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                            fontSize: 20,
-                          ),
-                        ),
-                        Icon(
-                          Icons.done_all,
-                          color: Colors.green,
-                          size: 20,
-                        ),
+                      children: <Widget>[ Text(db.surveys[index].Surveyname, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 28,),),
+                        Text('28 People have answered', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 20,),),
+                        Icon(Icons.done_all, color: Colors.green, size: 20,),
                       ],
+
                     ),
+
                   ),
                 ),
               );
@@ -246,9 +193,9 @@ class RootPage extends StatelessWidget {
           ),
         ),
       );
-    } else if (destination.page == "profile") {
+    }else if(destination.page == "profile"){
       return profile(studentID: studentID);
-    } else {
+    }else {
       return Scaffold(
         appBar: AppBar(
           centerTitle: true,
@@ -280,7 +227,7 @@ class RootPage extends StatelessWidget {
 }
 
 class DestinationView extends StatefulWidget {
-  const DestinationView({Key key, this.destination}) : super(key: key);
+  const DestinationView({ Key key, this.destination }) : super(key: key);
 
   final Destination destination;
 
@@ -296,31 +243,18 @@ class _DestinationViewState extends State<DestinationView> {
         return MaterialPageRoute(
           settings: settings,
           builder: (BuildContext context) {
-            switch (settings.name) {
+            switch(settings.name) {
               case '/':
                 return RootPage(destination: widget.destination);
               case '/login':
                 return LoginPage(destination: widget.destination);
               case '/feedback':
-                final Map arguments =
-                    ModalRoute.of(context).settings.arguments as Map;
-                return chat(
-                  chatt: arguments['chat'],
-                  studentID: studentID,
-                  feedbackID: arguments['feedbackID'],
-                  feedbackTitle: arguments['feedbackTitle'],
-                );
+                final Map arguments = ModalRoute.of(context).settings.arguments as Map;
+                return chat(chatt: arguments['chat'],studentID: studentID,feedbackID: arguments['feedbackID'],feedbackTitle: arguments['feedbackTitle'],);
               case '/showsurvey':
-                return showSurvey(
-                  destination: widget.destination,
-                  surveyy: settings.arguments,
-                  studentID: studentID,
-                );
+                return showSurvey(destination: widget.destination, surveyy: settings.arguments,studentID: studentID,);
               case 'profile':
-                return profile(
-                  destination: widget.destination,
-                  studentID: studentID,
-                );
+                return profile(destination: widget.destination, studentID: studentID,);
             }
           },
         );
@@ -334,8 +268,7 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage>
-    with TickerProviderStateMixin<HomePage> {
+class _HomePageState extends State<HomePage> with TickerProviderStateMixin<HomePage> {
   int _currentIndex = 0;
 
   @override
@@ -359,7 +292,9 @@ class _HomePageState extends State<HomePage>
         },
         items: allDestinations.map((Destination destination) {
           return BottomNavigationBarItem(
-              icon: Icon(destination.icon), title: Text(destination.title));
+              icon: Icon(destination.icon),
+              title: Text(destination.title)
+          );
         }).toList(),
         unselectedItemColor: Colors.grey,
         fixedColor: Colors.lightBlue,
@@ -369,10 +304,9 @@ class _HomePageState extends State<HomePage>
 }
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({Key key, this.destination}) : super(key: key);
+  const LoginPage({ Key key, this.destination }) : super(key: key);
 
   final Destination destination;
-
   @override
   _LoginPageState createState() => _LoginPageState();
 }
@@ -382,9 +316,9 @@ class _LoginPageState extends State<LoginPage> {
 
   int _studentid = 0;
   int _password = 0;
-
   @override
   Widget build(BuildContext context) {
+
     final emailField = TextField(
       obscureText: false,
       style: style,
@@ -392,7 +326,7 @@ class _LoginPageState extends State<LoginPage> {
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Student ID",
           border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+          OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
       onChanged: (str) {
         setState(() {
           var id = int.parse(str);
@@ -408,7 +342,7 @@ class _LoginPageState extends State<LoginPage> {
           contentPadding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
           hintText: "Password",
           border:
-              OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
+          OutlineInputBorder(borderRadius: BorderRadius.circular(32.0))),
       onChanged: (str) {
         setState(() {
           var pass = int.parse(str);
@@ -424,7 +358,7 @@ class _LoginPageState extends State<LoginPage> {
         minWidth: MediaQuery.of(context).size.width,
         padding: EdgeInsets.fromLTRB(20.0, 15.0, 20.0, 15.0),
         onPressed: () {
-          User login = new User(this._studentid, this._password);
+          User login = new User(this._studentid,this._password);
           ColorLoader(
             color1: Colors.green,
             color2: Colors.green,
@@ -433,14 +367,14 @@ class _LoginPageState extends State<LoginPage> {
           Timer timer = new Timer(new Duration(seconds: 5), () {
             bool checkLogin = login.loggedin;
             print(checkLogin);
-            if (checkLogin && this._studentid == this._password) {
+            if(checkLogin && this._studentid==this._password){
               Route route = MaterialPageRoute(builder: (context) => HomePage());
               Navigator.push(context, route);
-            } else {
+            }else {
               Navigator.pushNamed(context, "/");
             }
           });
-        },
+          },
         child: Text("Login",
             textAlign: TextAlign.center,
             style: style.copyWith(
@@ -451,42 +385,44 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: CustomScrollView(
         slivers: <Widget>[
-          SliverToBoxAdapter(
-            child: Center(
-              child: Container(
-                color: Colors.white,
-                child: Padding(
-                  padding: const EdgeInsets.all(36.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      SizedBox(
-                        height: 155.0,
-                        child: Image.asset(
-                          "assets/logo.png",
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                      SizedBox(height: 45.0),
-                      emailField,
-                      SizedBox(height: 25.0),
-                      passwordField,
-                      SizedBox(
-                        height: 35.0,
-                      ),
-                      loginButon,
-                      SizedBox(
-                        height: 15.0,
-                      ),
-                    ],
+      SliverToBoxAdapter(
+          child: Center(
+
+          child: Container(
+            color: Colors.white,
+            child: Padding(
+              padding: const EdgeInsets.all(36.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  SizedBox(
+                    height: 155.0,
+                    child: Image.asset(
+                      "assets/logo.png",
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
+                  SizedBox(height: 45.0),
+                  emailField,
+
+                  SizedBox(height: 25.0),
+                  passwordField,
+                  SizedBox(
+                    height: 35.0,
+                  ),
+                  loginButon,
+                  SizedBox(
+                    height: 15.0,
+                  ),
+                ],
               ),
             ),
           ),
-        ],
+        ),
       ),
+    ],
+    ),
     );
   }
 }
@@ -503,8 +439,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
-void main() => runApp(
-      Phoenix(
-        child: MyApp(),
-      ),
-    );
+
+void main() => runApp(Phoenix(
+  child: MyApp(),
+),);
+
+

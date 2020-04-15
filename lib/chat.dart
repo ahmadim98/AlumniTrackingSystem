@@ -19,9 +19,11 @@ class chat extends StatefulWidget {
 
 class _chatState extends State<chat> {
   final TextEditingController textEditingController = new TextEditingController();
+  List<Chat> chatt;
 
   @override
   Widget build(BuildContext context) {
+    chatt = widget.chatt;
     return Scaffold(
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
@@ -40,14 +42,14 @@ class _chatState extends State<chat> {
         children: <Widget>[
           new Expanded(
             child: new ListView.builder(
-              itemCount: widget.chatt.length,//here where u can change the list !!
+              itemCount: chatt.length,//here where u can change the list !!
               itemBuilder: (BuildContext context, int index) {
                 //this._answers.add("");
-                if(widget.chatt[index].FeedbackID == widget.feedbackID){
-                  if(widget.chatt[index].From == widget.studentID.toString()){
+                if(chatt[index].FeedbackID == widget.feedbackID){
+                  if(chatt[index].From == widget.studentID.toString()){
                     return Container(
                       child: Text(
-                        widget.chatt[index].Message,
+                        chatt[index].Message,
                         style: TextStyle(color: Colors.black),
                       ),
                       padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
@@ -59,7 +61,7 @@ class _chatState extends State<chat> {
                   }else {
                     return Container(
                       child: Text(
-                        widget.chatt[index].Message,
+                        chatt[index].Message,
                         style: TextStyle(color: Colors.white),
                       ),
                       padding: EdgeInsets.fromLTRB(15.0, 10.0, 15.0, 10.0),
@@ -68,7 +70,7 @@ class _chatState extends State<chat> {
                           color: greyColor, borderRadius: BorderRadius.circular(8.0)),
                       margin: EdgeInsets.only(bottom: 20.0, left: 10.0),
                     );
-                  };
+                  }
                 }return Container();
               },
             ),
@@ -118,11 +120,14 @@ class _chatState extends State<chat> {
               child: new IconButton(
                 icon: new Icon(Icons.send),
                 onPressed: () {
-                  print(textEditingController.text);
-                  Chat ch = new Chat(-1,widget.feedbackID,widget.studentID.toString(),"1",textEditingController.text);
-                  ch.sendChat(widget.feedbackID);
-                  textEditingController.clear();     // Clear the Text area
-                  setState(() {});
+                  setState(() {
+                    print(textEditingController.text);
+                    Chat ch = new Chat(-1,widget.feedbackID,widget.studentID.toString(),"1",textEditingController.text);
+                    ch.sendChat(widget.feedbackID);
+                    textEditingController.clear();// Clear the Text area
+                    chatt.add(ch);
+                    (context as Element).reassemble();
+                  });
                 },
                 color: primaryColor,
               ),
