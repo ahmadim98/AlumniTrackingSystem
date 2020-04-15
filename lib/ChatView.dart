@@ -88,7 +88,7 @@ class _ChatRoomState extends State<ChatRoom> {
       child: Row(
         children: <Widget>[
           // Button send image
-          Material(
+          /*Material(
             child: new Container(
               margin: new EdgeInsets.symmetric(horizontal: 1.0),
               child: new IconButton(
@@ -98,7 +98,7 @@ class _ChatRoomState extends State<ChatRoom> {
               ),
             ),
             color: Colors.white,
-          ),
+          ),*/
 
           // Edit text
           Flexible(

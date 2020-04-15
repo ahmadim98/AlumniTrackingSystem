@@ -427,9 +427,10 @@ class _profileState extends State<profile> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
-                            Row(
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
-                                Column(
+                                Row(
                                   children: <Widget>[
                                     Text(
                                       'Job Title:',
@@ -439,39 +440,39 @@ class _profileState extends State<profile> {
                                       ),
                                     ),
                                     SizedBox(
-                                      height: 10,
+                                      width: 230,
                                     ),
-                                    Text(
-                                      '${experiences[index].jobTitle}',
-                                      style: TextStyle(
-                                          fontSize: 20,
-                                          letterSpacing: 2,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                    SizedBox(
-                                      height: 10,
+                                    IconButton(
+                                      icon: Icon(Icons.delete),
+                                      onPressed: () {
+                                        //deleteExper('${experiences[index].jobTitle}', '${experiences[index].startDate.year}-${experiences[index].startDate.month}-${experiences[index].startDate.day}', '${experiences[index].endDate.year}-${experiences[index].endDate.month}-${experiences[index].endDate.day}', widget.studentID);
+                                        Experience experience = new Experience(
+                                            experiences[index].jobTitle,
+                                            experiences[index].startDate,
+                                            experiences[index].endDate,
+                                            widget.studentID);
+                                        profile.deleteExperience(experience);
+                                        Timer timer =
+                                        new Timer(new Duration(seconds: 2), () {
+                                          profile.updateProfile(widget.studentID);
+                                          (context as Element).reassemble();
+                                        });
+                                      },
                                     ),
                                   ],
                                 ),
                                 SizedBox(
-                                  width: 230,
+                                  height: 10,
                                 ),
-                                IconButton(
-                                  icon: Icon(Icons.delete),
-                                  onPressed: () {
-                                    //deleteExper('${experiences[index].jobTitle}', '${experiences[index].startDate.year}-${experiences[index].startDate.month}-${experiences[index].startDate.day}', '${experiences[index].endDate.year}-${experiences[index].endDate.month}-${experiences[index].endDate.day}', widget.studentID);
-                                    Experience experience = new Experience(
-                                        experiences[index].jobTitle,
-                                        experiences[index].startDate,
-                                        experiences[index].endDate,
-                                        widget.studentID);
-                                    profile.deleteExperience(experience);
-                                    Timer timer =
-                                        new Timer(new Duration(seconds: 2), () {
-                                      profile.updateProfile(widget.studentID);
-                                      (context as Element).reassemble();
-                                    });
-                                  },
+                                Text(
+                                  '${experiences[index].jobTitle}',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      letterSpacing: 2,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  height: 10,
                                 ),
                               ],
                             ),
