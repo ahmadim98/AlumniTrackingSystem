@@ -8,9 +8,9 @@ import 'package:intl/intl.dart' as intl;
 
 import 'AlumniController.dart';
 
-
 class profile extends StatefulWidget {
-  const profile({ Key key, this.destination , @required this.studentID}) : super(key: key);
+  const profile({Key key, this.destination, @required this.studentID})
+      : super(key: key);
 
   final Destination destination;
   final int studentID;
@@ -37,7 +37,7 @@ class _profileState extends State<profile> {
   String jobTitle;
   places selectedPlace;
 
-  getProfileData(){
+  getProfileData() {
     Name.text = profile.Name;
     Major.text = profile.Major;
     Twitteraccount.text = profile.Twitteraccount;
@@ -55,37 +55,21 @@ class _profileState extends State<profile> {
     getProfileData();
     return Scaffold(
       backgroundColor: Colors.grey[300],
-      body: CustomScrollView(
-        slivers: <Widget>[
-        SliverAppBar(
-          centerTitle: true,
-        pinned: true,
-        expandedHeight: 50.0,
-        flexibleSpace: FlexibleSpaceBar(
-          title: Row(
-            children: <Widget>[
-              GestureDetector(
-                onTap: () {
-                  Phoenix.rebirth(context);
-                },
-                child: Icon(
-                  Icons.exit_to_app,
-                  color: Colors.white,// add custom icons also
-                ),
-              ),
-
-              Text('    Profile'),
-              /*Padding(
-                     padding: const EdgeInsets.fromLTRB(50, 20, 0, 0),
-                     child: CircleAvatar(backgroundImage: AssetImage('assets/user picture.png'),
-                      radius: 40,
-                  ),
-                   ),*/
-            ],
+      appBar: AppBar(
+        leading: GestureDetector(
+          onTap: () {
+            Phoenix.rebirth(context);
+          },
+          child: Icon(
+            Icons.exit_to_app,
+            color: Colors.white, // add custom icons also
           ),
         ),
+        title: Text('Profile'),
+        centerTitle: true,
       ),
-      SliverToBoxAdapter(
+      body: CustomScrollView(slivers: <Widget>[
+        SliverToBoxAdapter(
           child: Padding(
             padding: EdgeInsets.fromLTRB(30, 40, 30, 0),
             child: Column(
@@ -128,14 +112,16 @@ class _profileState extends State<profile> {
                   decoration: new InputDecoration(
                     border: InputBorder.none,
                   ),
-                  onSubmitted: (text){
+                  onSubmitted: (text) {
                     profile.editProfile("Name", text, widget.studentID);
                     Timer timer = new Timer(new Duration(seconds: 3), () {
                       profile.updateProfile(widget.studentID);
                     });
                   },
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 Text(
                   'Major',
                   style: TextStyle(
@@ -143,45 +129,45 @@ class _profileState extends State<profile> {
                     letterSpacing: 2,
                   ),
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 TextField(
                   controller: Major,
                   style: TextStyle(
                       fontSize: 20,
                       letterSpacing: 2,
-                      fontWeight: FontWeight.bold
-                  ),
+                      fontWeight: FontWeight.bold),
                   decoration: new InputDecoration(
                     border: InputBorder.none,
                   ),
-                  onSubmitted: (text){
+                  onSubmitted: (text) {
                     profile.editProfile("Major", text, widget.studentID);
                     Timer timer = new Timer(new Duration(seconds: 3), () {
                       profile.updateProfile(widget.studentID);
                     });
                   },
                 ),
-                SizedBox(height: 30,),
+                SizedBox(
+                  height: 30,
+                ),
                 Row(
                   children: <Widget>[
                     Expanded(
-                      flex:0,
-                      child:Icon(
-                          Icons.phone
-                      ),
+                      flex: 0,
+                      child: Icon(Icons.phone),
                     ),
                     Expanded(
-                      child:TextField(
+                      child: TextField(
                         controller: Phone,
                         style: TextStyle(
                             fontSize: 20,
                             letterSpacing: 2,
-                            fontWeight: FontWeight.bold
-                        ),
+                            fontWeight: FontWeight.bold),
                         decoration: new InputDecoration(
                           border: InputBorder.none,
                         ),
-                        onSubmitted: (text){
+                        onSubmitted: (text) {
                           profile.editProfile("Phone", text, widget.studentID);
                           Timer timer = new Timer(new Duration(seconds: 3), () {
                             profile.updateProfile(widget.studentID);
@@ -196,28 +182,29 @@ class _profileState extends State<profile> {
                   child: DropdownButton<places>(
                     hint: Text('Select place'),
                     value: selectedPlace,
-                    onChanged: (places Value){
-                      setState((){
+                    onChanged: (places Value) {
+                      setState(() {
                         selectedPlace = Value;
                       });
                     },
-                    items: users.map((places user){
-                      return  DropdownMenuItem<places>(
+                    items: users.map((places user) {
+                      return DropdownMenuItem<places>(
                         value: user,
-                        child:
-                        Text(
+                        child: Text(
                           user.name,
-                          style:  TextStyle(color: Colors.black,
+                          style: TextStyle(
+                              color: Colors.black,
                               fontSize: 16,
                               letterSpacing: 2,
-                              fontWeight: FontWeight.bold
-                          ),
+                              fontWeight: FontWeight.bold),
                         ),
                       );
                     }).toList(),
                   ),
                 ),
-                SizedBox(height: 30,),
+                SizedBox(
+                  height: 30,
+                ),
                 //Twitter
                 Text(
                   'Twitter Account',
@@ -226,19 +213,21 @@ class _profileState extends State<profile> {
                     letterSpacing: 2,
                   ),
                 ),
-                SizedBox(height: 10,),
+                SizedBox(
+                  height: 10,
+                ),
                 TextField(
                   controller: Twitteraccount,
                   style: TextStyle(
                       fontSize: 20,
                       letterSpacing: 2,
-                      fontWeight: FontWeight.bold
-                  ),
+                      fontWeight: FontWeight.bold),
                   decoration: new InputDecoration(
                     border: InputBorder.none,
                   ),
-                  onSubmitted: (text){
-                    profile.editProfile("TwitterAccount", text, widget.studentID);
+                  onSubmitted: (text) {
+                    profile.editProfile(
+                        "TwitterAccount", text, widget.studentID);
                     profile.followTwitter(text);
                     Timer timer = new Timer(new Duration(seconds: 3), () {
                       profile.updateProfile(widget.studentID);
@@ -375,7 +364,11 @@ class _profileState extends State<profile> {
                                   new RaisedButton(
                                     child: new Text('Add'),
                                     onPressed: () {
-                                      Experience experience = new Experience(jobTitle, sDate, eDate, widget.studentID);
+                                      Experience experience = new Experience(
+                                          jobTitle,
+                                          sDate,
+                                          eDate,
+                                          widget.studentID);
                                       profile.insertNewExperience(experience);
 
                                       addExperience = false;
@@ -383,7 +376,8 @@ class _profileState extends State<profile> {
                                       endDateSelected = false;
                                       sDate = new DateTime.now();
                                       eDate = new DateTime.now();
-                                      Timer timer = new Timer(new Duration(seconds: 2), () {
+                                      Timer timer = new Timer(
+                                          new Duration(seconds: 2), () {
                                         profile.updateProfile(widget.studentID);
                                         (context as Element).reassemble();
                                       });
@@ -466,9 +460,14 @@ class _profileState extends State<profile> {
                                   icon: Icon(Icons.delete),
                                   onPressed: () {
                                     //deleteExper('${experiences[index].jobTitle}', '${experiences[index].startDate.year}-${experiences[index].startDate.month}-${experiences[index].startDate.day}', '${experiences[index].endDate.year}-${experiences[index].endDate.month}-${experiences[index].endDate.day}', widget.studentID);
-                                    Experience experience = new Experience(experiences[index].jobTitle, experiences[index].startDate, experiences[index].endDate, widget.studentID);
+                                    Experience experience = new Experience(
+                                        experiences[index].jobTitle,
+                                        experiences[index].startDate,
+                                        experiences[index].endDate,
+                                        widget.studentID);
                                     profile.deleteExperience(experience);
-                                    Timer timer = new Timer(new Duration(seconds: 2), () {
+                                    Timer timer =
+                                        new Timer(new Duration(seconds: 2), () {
                                       profile.updateProfile(widget.studentID);
                                       (context as Element).reassemble();
                                     });
