@@ -37,4 +37,18 @@ void main() {
     });
   });
 
+  test('Add New Experience', () async{
+    Profile result = new Profile(437101237);
+    DateTime startDate =  new DateTime.utc(2005, 11, 9);
+    DateTime endDate =  new DateTime.utc(2007, 12, 28);
+      Experience experience = new Experience('Test1', startDate, endDate, 437101237);
+    var expected;
+      @override
+    void initState() async{
+     expected = await result.insertNewExperience(experience);
+      }
+      print(expected);
+      expect(expected, 1);
+  });
+
 }

@@ -45,6 +45,7 @@ class Profile{
   String Twitteraccount;
   String Phone;
   List<Experience> Experiences;
+  int NumAffectedRows;
 
   Profile(int StudentID){
     this.Experiences = new List();
@@ -150,31 +151,34 @@ class Profile{
     editProfile();
   }
 
-  insertNewExperience(Experience experience){
+  int insertNewExperience(Experience experience){
     Future insertNewExperience() async {
       final conn = await MySqlConnection.connect(ConnectionSettings(
           host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
       // Query the database using a parameterized query
       var results = await conn.query(
           'insert into experience (Job_title, Start_Date, End_Date, GraduateID) VALUES (?, ?, ?, ?)',
-          ['${experience.jobTitle}', '${experience.startDate}'.toString(), '${experience.endDate}'.toString(), '${experience.GraduateID}']);
+          ['${experience.jobTitle}', '${experience.startDate.year}-${experience.startDate.month}-${experience.startDate.day}', '${experience.endDate.year}-${experience.endDate.month}-${experience.endDate.day}', '${experience.GraduateID}']);
+      NumAffectedRows = results.affectedRows;
       await conn.close();
+      print('${results.affectedRows} NAR');
     }
     insertNewExperience();
+    return NumAffectedRows;
+
   }
 
   deleteExperience(Experience experience){
-    Future deleteExperience(
-        String jobTitle, String sDate, String eDate, int studentID) async {
+    Future deleteExperience() async {
       // Open a connection (testdb should already exist)
       final conn = await MySqlConnection.connect(ConnectionSettings(
           host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
       // Query the database using a parameterized query
       var results = await conn.query(
-          'DELETE FROM `experience` WHERE `Job_title` = ? AND `Start_Date` = ? AND `End_Date` = ? AND `GraduateID` = ?',['$jobTitle','$sDate','$eDate','$studentID']);
+          'DELETE FROM `experience` WHERE `Job_title` = ? AND `Start_Date` = ? AND `End_Date` = ? AND `GraduateID` = ?',['${experience.jobTitle}', '${experience.startDate.year}-${experience.startDate.month}-${experience.startDate.day}', '${experience.endDate.year}-${experience.endDate.month}-${experience.endDate.day}', '${experience.GraduateID}']);
       await conn.close();
     }
-    deleteExperience(experience.jobTitle, experience.startDate.toString(), experience.endDate.toString(), experience.GraduateID);
+    deleteExperience();
   }
 
   followTwitter(String alumniTwitter){
