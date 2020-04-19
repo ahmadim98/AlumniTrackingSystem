@@ -151,6 +151,7 @@ class Profile{
   }
 
   insertNewExperience(Experience experience){
+    int r = 0;
     Future insertNewExperience() async {
       final conn = await MySqlConnection.connect(ConnectionSettings(
           host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
@@ -158,9 +159,13 @@ class Profile{
       var results = await conn.query(
           'insert into experience (Job_title, Start_Date, End_Date, GraduateID) VALUES (?, ?, ?, ?)',
           ['${experience.jobTitle}', '${experience.startDate}'.toString(), '${experience.endDate}'.toString(), '${experience.GraduateID}']);
+
+      r = results.affectedRows;
+      print(r);
       await conn.close();
     }
     insertNewExperience();
+    return r;
   }
 
   deleteExperience(Experience experience){
@@ -224,10 +229,10 @@ class Profile{
 class Experience {
   int GraduateID;
   String jobTitle;
-  DateTime startDate;
-  DateTime endDate;
+  String startDate;
+  String endDate;
 
-  Experience(String jobTitle, DateTime startDate, DateTime endDate,int GraduateID) {
+  Experience(String jobTitle, String startDate, String endDate,int GraduateID) {
     this.GraduateID = GraduateID;
     this.jobTitle = jobTitle;
     this.startDate = startDate;

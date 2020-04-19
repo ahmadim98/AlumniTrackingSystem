@@ -37,4 +37,12 @@ void main() {
     });
   });
 
+  test('Create new experience', () {
+    //Alumni result = new Alumni();
+    Profile result = new Profile(437101237);
+    Timer timer = new Timer(new Duration(seconds: 1), () {
+      int expected = 5555555555;
+      expect(result.Phone, expected);
+    });
+  });
 }
