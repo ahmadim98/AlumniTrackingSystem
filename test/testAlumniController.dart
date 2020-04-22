@@ -37,12 +37,18 @@ void main() {
     });
   });
 
-  test('Create new experience', () {
-    //Alumni result = new Alumni();
+  test('Add New Experience', () async{
     Profile result = new Profile(437101237);
-    Timer timer = new Timer(new Duration(seconds: 1), () {
-      int expected = 5555555555;
-      expect(result.Phone, expected);
-    });
+    DateTime startDate =  new DateTime.utc(2005, 11, 9);
+    DateTime endDate =  new DateTime.utc(2007, 12, 28);
+      Experience experience = new Experience('Test1', startDate, endDate, 437101237);
+    var expected;
+      @override
+    void initState() async{
+     expected = await result.insertNewExperience(experience);
+      }
+      print(expected);
+      expect(expected, 1);
   });
+
 }

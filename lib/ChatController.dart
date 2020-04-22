@@ -46,7 +46,7 @@ class FeedbackController {
           host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
       // Query the database using a parameterized query
       var results = await conn
-          .query('INSERT INTO `feedback` (`ID`, `GraduateID`, `title`) VALUES (?, ?, ?)', [Null,studentID,title]);
+          .query('INSERT INTO `feedback` (`ID`, `GraduateID`, `title`) VALUES (?, ?, ?)', [null,studentID,title]);
       await conn.close();
     }
     main();
