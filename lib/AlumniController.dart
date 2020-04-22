@@ -3,7 +3,7 @@ import 'dart:async';
 import 'CONDBINFO.dart';
 import 'package:twitter_api/twitter_api.dart';
 
-class AlumniController{
+class AlumniController {
   AlumniController();
 
 }
@@ -12,24 +12,29 @@ class Alumni {
   int ID;
   int Password;
   bool LoggedIn;
-  Alumni(int ID,int Password){
+
+  Alumni(int ID, int Password) {
     this.ID = ID;
     this.Password = Password;
 
     int result = 0;
-    Future main() async{
+    Future main() async {
       final conn = await MySqlConnection.connect(ConnectionSettings(
-          host: DBH, port: DBP,  user: DBU, password: DBPAS, db: DBN));
+          host: DBH,
+          port: DBP,
+          user: DBU,
+          password: DBPAS,
+          db: DBN));
       var results = await conn
           .query('select ID from alumni where ID = ?', [ID]);
 
       for (var col in results) {
-        result = col[0];//to get the first result
+        result = col[0]; //to get the first result
       }
       print(result);
-      if (result == 0){
+      if (result == 0) {
         this.LoggedIn = false;
-      }else {
+      } else {
         this.LoggedIn = true;
       }
       await conn.close();
@@ -39,16 +44,18 @@ class Alumni {
 
 }
 
-class Profile{
+class Profile {
   String Name;
   String Major;
   String Twitteraccount;
   String Phone;
   List<Experience> Experiences;
+  //List<Place> Places;
   int NumAffectedRows;
 
-  Profile(int StudentID){
+  Profile(int StudentID) {
     this.Experiences = new List();
+    //this.Places = new List();
 
     Future getProfile() async {
       final conn = await MySqlConnection.connect(
@@ -72,18 +79,22 @@ class Profile{
       }
     }
     getProfile();
-    if (Experiences.isNotEmpty){
+    if (Experiences.isNotEmpty) {
       Experiences.clear();
     }
     Future getExperiences() async {
       // Open a connection (testdb should already exist)
       final conn = await MySqlConnection.connect(ConnectionSettings(
-          host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
+          host: DBH,
+          port: DBP,
+          user: DBU,
+          password: DBPAS,
+          db: DBN));
       // Query the database using a parameterized query
       var results = await conn.query(
           'SELECT * FROM `experience` WHERE GraduateID=?', [StudentID]);
       for (var col in results) {
-        Experience experience = new Experience(col[0], col[1], col[2], col[3]);
+        Experience experience = new Experience(col[0], col[1], col[2], col[3], col[4]);
         this.Experiences.add(experience);
       }
       await conn.close();
@@ -92,7 +103,7 @@ class Profile{
     getExperiences();
   }
 
-  updateProfile(int StudentID){
+  updateProfile(int StudentID) {
     Future getProfile() async {
       final conn = await MySqlConnection.connect(
           ConnectionSettings(
@@ -115,18 +126,22 @@ class Profile{
       }
     }
     getProfile();
-    if (Experiences.isNotEmpty){
+    if (Experiences.isNotEmpty) {
       Experiences.clear();
     }
     Future getExperiences() async {
       // Open a connection (testdb should already exist)
       final conn = await MySqlConnection.connect(ConnectionSettings(
-          host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
+          host: DBH,
+          port: DBP,
+          user: DBU,
+          password: DBPAS,
+          db: DBN));
       // Query the database using a parameterized query
       var results = await conn.query(
           'SELECT * FROM `experience` WHERE GraduateID=?', [StudentID]);
       for (var col in results) {
-        Experience experience = new Experience(col[0], col[1], col[2], col[3]);
+        Experience experience = new Experience(col[0], col[1], col[2], col[3], col[4]);
         this.Experiences.add(experience);
       }
       await conn.close();
@@ -135,7 +150,7 @@ class Profile{
     getExperiences();
   }
 
-  editProfile(String Field,String newValue,int StudentID){
+  editProfile(String Field, String newValue, int StudentID) {
     Future editProfile() async {
       final conn = await MySqlConnection.connect(
           ConnectionSettings(
@@ -151,39 +166,61 @@ class Profile{
     editProfile();
   }
 
-  int insertNewExperience(Experience experience){
+  int insertNewExperience(Experience experience) {
     Future insertNewExperience() async {
       final conn = await MySqlConnection.connect(ConnectionSettings(
-          host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
+          host: DBH,
+          port: DBP,
+          user: DBU,
+          password: DBPAS,
+          db: DBN));
       // Query the database using a parameterized query
       var results = await conn.query(
-          'insert into experience (Job_title, Start_Date, End_Date, GraduateID) VALUES (?, ?, ?, ?)',
-          ['${experience.jobTitle}', '${experience.startDate.year}-${experience.startDate.month}-${experience.startDate.day}', '${experience.endDate.year}-${experience.endDate.month}-${experience.endDate.day}', '${experience.GraduateID}']);
+          'insert into experience (Job_title, Start_Date, End_Date, GraduateID, place) VALUES (?, ?, ?, ?, ?)',
+          [
+            '${experience.jobTitle}',
+            '${experience.startDate.year}-${experience.startDate
+                .month}-${experience.startDate.day}',
+            '${experience.endDate.year}-${experience.endDate.month}-${experience
+                .endDate.day}',
+            experience.GraduateID,
+            '${experience.place}'
+          ]);
       NumAffectedRows = results.affectedRows;
       await conn.close();
       print('${results.affectedRows} NAR');
     }
     insertNewExperience();
     return NumAffectedRows;
-
   }
 
-  deleteExperience(Experience experience){
+  deleteExperience(Experience experience) {
     Future deleteExperience() async {
       // Open a connection (testdb should already exist)
       final conn = await MySqlConnection.connect(ConnectionSettings(
-          host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
+          host: DBH,
+          port: DBP,
+          user: DBU,
+          password: DBPAS,
+          db: DBN));
       // Query the database using a parameterized query
       var results = await conn.query(
-          'DELETE FROM `experience` WHERE `Job_title` = ? AND `Start_Date` = ? AND `End_Date` = ? AND `GraduateID` = ?',['${experience.jobTitle}', '${experience.startDate.year}-${experience.startDate.month}-${experience.startDate.day}', '${experience.endDate.year}-${experience.endDate.month}-${experience.endDate.day}', '${experience.GraduateID}']);
+          'DELETE FROM `experience` WHERE `Job_title` = ? AND `Start_Date` = ? AND `End_Date` = ? AND `GraduateID` = ?',
+          [
+            '${experience.jobTitle}',
+            '${experience.startDate.year}-${experience.startDate
+                .month}-${experience.startDate.day}',
+            '${experience.endDate.year}-${experience.endDate.month}-${experience
+                .endDate.day}',
+            '${experience.GraduateID}'
+          ]);
       await conn.close();
     }
     deleteExperience();
   }
 
-  followTwitter(String alumniTwitter){
+  followTwitter(String alumniTwitter) {
     Future twitterFollow() async {
-
       // Setting placeholder api keys
       String consumerApiKey = "QivrhF2QHWq4fotzoSl1Bi6aA";
       String consumerApiSecret = "NwOYIg91nhG2vk2CHLtGLSoxHZfIXLj9h6KNRIAA8cJ5yCmXQ2";
@@ -219,22 +256,52 @@ class Profile{
       // Print off the response
       print(res.statusCode);
       print(res.body);
-
     }
     twitterFollow();
   }
+
+  /*Future getPlaces() async {
+    // Open a connection (testdb should already exist)
+    final conn = await MySqlConnection.connect(ConnectionSettings(
+        host: DBH,
+        port: DBP,
+        user: DBU,
+        password: DBPAS,
+        db: DBN));
+    // Query the database using a parameterized query
+    var results = await conn.query(
+        'SELECT * FROM `Place`');
+    for (var col in results) {
+      Place place = new Place(col[0]);
+      this.Places.add(place);
+    }
+    await conn.close();
+  }*/
+
 }
+
+
+/*class Place {
+  String name;
+
+  Place(String name) {
+    this.name = name;
+  }
+}*/
 
 class Experience {
   int GraduateID;
   String jobTitle;
   DateTime startDate;
   DateTime endDate;
+  String place;
 
-  Experience(String jobTitle, DateTime startDate, DateTime endDate,int GraduateID) {
+  Experience(String jobTitle, DateTime startDate, DateTime endDate,
+      int GraduateID, String place) {
     this.GraduateID = GraduateID;
     this.jobTitle = jobTitle;
     this.startDate = startDate;
     this.endDate = endDate;
+    this.place = place;
   }
 }

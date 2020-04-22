@@ -37,10 +37,12 @@ class _showSurvey extends State<showSurvey> {
   int length = 0;
   List<String> _answers = new List(5);
   List<Answer> answersToDB = new List();
+  final GlobalKey<ScaffoldState> scaffoldkey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: scaffoldkey,
       appBar: AppBar(
         title: Text(widget.destination.title),
         backgroundColor: widget.destination.color,
@@ -143,6 +145,17 @@ class _showSurvey extends State<showSurvey> {
                   answer.SubmitAnswers();
                   counter++;
                 }
+                final snackBar = SnackBar(
+                  content: Text('Survey Submiited Successfully'),
+                  backgroundColor: Colors.green,
+                  action: SnackBarAction(
+                    label: 'OK',
+                    onPressed: () {
+                      // Some code to undo the change.
+                    },
+                  ),
+                );
+                scaffoldkey.currentState.showSnackBar(snackBar);
                 Timer timer = new Timer(new Duration(seconds: 3), () {
                   Navigator.pop(context);
                 });

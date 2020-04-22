@@ -28,17 +28,20 @@ SurveyController SVController = new SurveyController();
 FeedbackController FDController = new FeedbackController(studentID);
 ChatController CTController;
 bool addNewChat = false;
+final GlobalKey<ScaffoldState> scaffoldkey = new GlobalKey<ScaffoldState>();
 
 class RootPage extends StatelessWidget {
   const RootPage({Key key, this.destination}) : super(key: key);
 
   final Destination destination;
 
+
   Widget _RPage(BuildContext context) {
     if (destination.page == "feedback") {
       CTController = new ChatController(studentID);
       String nameOfNewFeedback = "";
       return Scaffold(
+        key: scaffoldkey,
         appBar: AppBar(
           centerTitle: true,
           title: Text(destination.title),
@@ -165,11 +168,22 @@ class RootPage extends StatelessWidget {
                                       FDController.insertNewFeedback(
                                           nameOfNewFeedback);
                                       addNewChat = false;
-                                      Timer timer =
-                                          new Timer(new Duration(seconds: 1), () {
+                                      Timer timer = new Timer(
+                                          new Duration(seconds: 1), () {
                                         FDController =
                                             new FeedbackController(studentID);
                                         (context as Element).reassemble();
+                                        final snackBar = SnackBar(
+                                          content: Text('Add New Feedback Successfully'),
+                                          backgroundColor: Colors.green,
+                                          action: SnackBarAction(
+                                            label: 'OK',
+                                            onPressed: () {
+                                              // Some code to undo the change.
+                                            },
+                                          ),
+                                        );
+                                        scaffoldkey.currentState.showSnackBar(snackBar);
                                       });
                                     },
                                   ),
@@ -351,17 +365,22 @@ class _DestinationViewState extends State<DestinationView> {
 }
 
 class HomePage extends StatefulWidget {
+  final GlobalKey<ScaffoldState> scaffoldkey ;
+  HomePage({Key key,this.scaffoldkey }) : super(key: key);
   @override
   _HomePageState createState() => _HomePageState();
+
 }
 
 class _HomePageState extends State<HomePage>
     with TickerProviderStateMixin<HomePage> {
+
   int _currentIndex = 0;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       body: SafeArea(
         top: false,
         child: IndexedStack(
@@ -403,7 +422,7 @@ class _LoginPageState extends State<LoginPage> {
 
   int _studentid = 0;
   int _password = 0;
-
+  var scafLogin = new GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
     final emailField = TextField(
@@ -455,7 +474,7 @@ class _LoginPageState extends State<LoginPage> {
             bool checkLogin = login.LoggedIn;
             print(checkLogin);
             if (checkLogin && this._studentid == this._password) {
-              Route route = MaterialPageRoute(builder: (context) => HomePage());
+              Route route = MaterialPageRoute(builder: (context) => HomePage(scaffoldkey: scafLogin,));
               Navigator.push(context, route);
             } else {
               Navigator.pushNamed(context, "/");
@@ -470,6 +489,7 @@ class _LoginPageState extends State<LoginPage> {
     );
 
     return Scaffold(
+      key:  scafLogin,
       body: CustomScrollView(
         slivers: <Widget>[
           SliverToBoxAdapter(
