@@ -25,6 +25,7 @@ class _profileState extends State<profile> {
   final TextEditingController Major = TextEditingController();
   final TextEditingController Phone = TextEditingController();
   final TextEditingController Twitteraccount = TextEditingController();
+  final GlobalKey<ScaffoldState> scaffoldkey = new GlobalKey<ScaffoldState>();
 
   //these state indicate either we need to show specific widgets or not
   bool addExperience = false;
@@ -34,8 +35,10 @@ class _profileState extends State<profile> {
   Profile profile = new Profile(studentID);
   List<Experience> experiences = new List();
 
+
   String jobTitle;
-  places selectedPlace;
+  places selectedPlaceExp;
+  places selectedPlaceprof;
 
   getProfileData() {
     Name.text = profile.Name;
@@ -54,6 +57,7 @@ class _profileState extends State<profile> {
   Widget build(BuildContext context) {
     getProfileData();
     return Scaffold(
+      key: scaffoldkey,
       backgroundColor: Colors.grey[300],
       appBar: AppBar(
         leading: GestureDetector(
@@ -75,7 +79,7 @@ class _profileState extends State<profile> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                Center(
+                /*Center(
                   child: CircleAvatar(
                     backgroundImage: AssetImage('assets/user picture.png'),
                     radius: 40,
@@ -84,7 +88,7 @@ class _profileState extends State<profile> {
                 Divider(
                   height: 50,
                   color: Colors.grey[600],
-                ),
+                ),*/
                 Text(
                   'Name',
                   style: TextStyle(
@@ -116,6 +120,17 @@ class _profileState extends State<profile> {
                     profile.editProfile("Name", text, widget.studentID);
                     Timer timer = new Timer(new Duration(seconds: 3), () {
                       profile.updateProfile(widget.studentID);
+                      final snackBar = SnackBar(
+                        content: Text('Change Saved'),
+                        backgroundColor: Colors.green,
+                        action: SnackBarAction(
+                          label: 'OK',
+                          onPressed: () {
+                            // Some code to undo the change.
+                          },
+                        ),
+                      );
+                      scaffoldkey.currentState.showSnackBar(snackBar);
                     });
                   },
                 ),
@@ -145,6 +160,17 @@ class _profileState extends State<profile> {
                     profile.editProfile("Major", text, widget.studentID);
                     Timer timer = new Timer(new Duration(seconds: 3), () {
                       profile.updateProfile(widget.studentID);
+                      final snackBar = SnackBar(
+                        content: Text('Change Saved'),
+                        backgroundColor: Colors.green,
+                        action: SnackBarAction(
+                          label: 'OK',
+                          onPressed: () {
+                            // Some code to undo the change.
+                          },
+                        ),
+                      );
+                      scaffoldkey.currentState.showSnackBar(snackBar);
                     });
                   },
                 ),
@@ -171,6 +197,17 @@ class _profileState extends State<profile> {
                           profile.editProfile("Phone", text, widget.studentID);
                           Timer timer = new Timer(new Duration(seconds: 3), () {
                             profile.updateProfile(widget.studentID);
+                            final snackBar = SnackBar(
+                              content: Text('Change Saved'),
+                              backgroundColor: Colors.green,
+                              action: SnackBarAction(
+                                label: 'OK',
+                                onPressed: () {
+                                  // Some code to undo the change.
+                                },
+                              ),
+                            );
+                            scaffoldkey.currentState.showSnackBar(snackBar);
                           });
                         },
                       ),
@@ -181,10 +218,10 @@ class _profileState extends State<profile> {
                   padding: const EdgeInsets.fromLTRB(10, 10, 30, 0),
                   child: DropdownButton<places>(
                     hint: Text('Select place'),
-                    value: selectedPlace,
+                    value: selectedPlaceprof,
                     onChanged: (places Value) {
                       setState(() {
-                        selectedPlace = Value;
+                        selectedPlaceprof = Value;
                       });
                     },
                     items: users.map((places user) {
@@ -231,6 +268,17 @@ class _profileState extends State<profile> {
                     profile.followTwitter(text);
                     Timer timer = new Timer(new Duration(seconds: 3), () {
                       profile.updateProfile(widget.studentID);
+                      final snackBar = SnackBar(
+                        content: Text('Change Saved'),
+                        backgroundColor: Colors.green,
+                        action: SnackBarAction(
+                          label: 'OK',
+                          onPressed: () {
+                            // Some code to undo the change.
+                          },
+                        ),
+                      );
+                      scaffoldkey.currentState.showSnackBar(snackBar);
                     });
                   },
                 ),
@@ -302,6 +350,35 @@ class _profileState extends State<profile> {
                                 },
                               ),
                               Text(
+                                'Place',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 18,
+                                ),
+                              ),
+                              DropdownButton<places>(
+                                hint: Text('Select place'),
+                                value: selectedPlaceExp,
+                                onChanged: (places Value) {
+                                  setState(() {
+                                    selectedPlaceExp = Value;
+                                  });
+                                },
+                                items: users.map((places user) {
+                                  return DropdownMenuItem<places>(
+                                    value: user,
+                                    child: Text(
+                                      user.name,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          letterSpacing: 2,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                              Text(
                                 'Start Date',
                                 style: TextStyle(
                                   color: Colors.black,
@@ -368,7 +445,8 @@ class _profileState extends State<profile> {
                                           jobTitle,
                                           sDate,
                                           eDate,
-                                          widget.studentID);
+                                          widget.studentID,
+                                      selectedPlaceExp.name);
                                       profile.insertNewExperience(experience);
 
                                       addExperience = false;
@@ -380,6 +458,17 @@ class _profileState extends State<profile> {
                                           new Duration(seconds: 2), () {
                                         profile.updateProfile(widget.studentID);
                                         (context as Element).reassemble();
+                                        final snackBar = SnackBar(
+                                          content: Text('Add New Experince Successfully'),
+                                          backgroundColor: Colors.green,
+                                          action: SnackBarAction(
+                                            label: 'OK',
+                                            onPressed: () {
+                                              // Some code to undo the change.
+                                            },
+                                          ),
+                                        );
+                                        scaffoldkey.currentState.showSnackBar(snackBar);
                                       });
                                     },
                                   ),
@@ -450,12 +539,25 @@ class _profileState extends State<profile> {
                                             experiences[index].jobTitle,
                                             experiences[index].startDate,
                                             experiences[index].endDate,
-                                            widget.studentID);
+                                            widget.studentID,
+                                        experiences[index].place);
                                         profile.deleteExperience(experience);
-                                        Timer timer =
-                                        new Timer(new Duration(seconds: 2), () {
-                                          profile.updateProfile(widget.studentID);
+                                        Timer timer = new Timer(
+                                            new Duration(seconds: 2), () {
+                                          profile
+                                              .updateProfile(widget.studentID);
                                           (context as Element).reassemble();
+                                          final snackBar = SnackBar(
+                                            content: Text('Deleted Successfully'),
+                                            backgroundColor: Colors.red,
+                                            action: SnackBarAction(
+                                              label: 'OK',
+                                              onPressed: () {
+                                                // Some code to undo the change.
+                                              },
+                                            ),
+                                          );
+                                          scaffoldkey.currentState.showSnackBar(snackBar);
                                         });
                                       },
                                     ),
@@ -466,6 +568,26 @@ class _profileState extends State<profile> {
                                 ),
                                 Text(
                                   '${experiences[index].jobTitle}',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      letterSpacing: 2,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  'Place',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    letterSpacing: 2,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 10,
+                                ),
+                                Text(
+                                  '${experiences[index].place}',
                                   style: TextStyle(
                                       fontSize: 20,
                                       letterSpacing: 2,
@@ -587,4 +709,4 @@ class places {
   final String name;
 }
 
-List<places> users = <places>[const places('STC'), const places('Mobaily')];
+List<places> users = <places>[const places('STC'), const places('Mobaily'), const places('TC'), const places('IC'), const places('gov'), const places('other')];
