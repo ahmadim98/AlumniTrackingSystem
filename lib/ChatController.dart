@@ -77,7 +77,7 @@ class Chat{
           host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
       // Query the database using a parameterized query
       var results = await conn
-          .query('INSERT INTO `feedbackchat` (`ID`, `feedbackID`, `message`, `message_source`, `message_destination`) VALUES (NULL, ?, ?, ?, ?)', [feedbackID,this.Message,this.From,this.To]);
+          .query('INSERT INTO `feedbackchat` (`ID`, `feedbackID`, `message`, `sender`, `receiver`) VALUES (NULL, ?, ?, ?, ?)', [feedbackID,this.Message,this.From,this.To]);
       await conn.close();
     }
     //listScrollController.animateTo(0.0, duration: Duration(milliseconds: 300), curve: Curves.easeOut);
@@ -96,7 +96,7 @@ class ChatController {
           host: DBH, port: DBP, user: DBU, password: DBPAS, db: DBN));
       // Query the database using a parameterized query
       var results = await conn
-          .query('SELECT `ID`, `feedbackID`, `message`, `message_source`, `message_destination` FROM `feedbackchat`');
+          .query('SELECT `ID`, `feedbackID`, `message`, `sender`, `receiver` FROM `feedbackchat`');
 
       for (var col in results) {
           int id = col[0];

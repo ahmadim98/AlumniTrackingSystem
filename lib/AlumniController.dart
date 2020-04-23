@@ -94,7 +94,7 @@ class Profile {
       var results = await conn.query(
           'SELECT * FROM `experience` WHERE GraduateID=?', [StudentID]);
       for (var col in results) {
-        Experience experience = new Experience(col[0], col[1], col[2], col[3], col[4]);
+        Experience experience = new Experience(col[0], col[1], col[2], col[4], col[3]);
         this.Experiences.add(experience);
       }
       await conn.close();
@@ -176,15 +176,15 @@ class Profile {
           db: DBN));
       // Query the database using a parameterized query
       var results = await conn.query(
-          'insert into experience (Job_title, Start_Date, End_Date, GraduateID, place) VALUES (?, ?, ?, ?, ?)',
+          'insert into experience (Job_title, Start_Date, End_Date, Place, GraduateID) VALUES (?, ?, ?, ?, ?)',
           [
             '${experience.jobTitle}',
             '${experience.startDate.year}-${experience.startDate
                 .month}-${experience.startDate.day}',
             '${experience.endDate.year}-${experience.endDate.month}-${experience
                 .endDate.day}',
-            experience.GraduateID,
-            '${experience.place}'
+            '${experience.Place}',
+            experience.GraduateID
           ]);
       NumAffectedRows = results.affectedRows;
       await conn.close();
@@ -294,14 +294,28 @@ class Experience {
   String jobTitle;
   DateTime startDate;
   DateTime endDate;
-  String place;
+  String Place;
 
   Experience(String jobTitle, DateTime startDate, DateTime endDate,
       int GraduateID, String place) {
     this.GraduateID = GraduateID;
-    this.jobTitle = jobTitle;
+    switch(jobTitle){
+      case "Developer":
+        this.jobTitle = "dev";
+        break;
+      case "Design":
+        this.jobTitle = "des";
+        break;
+      case "Analyst":
+        this.jobTitle = "anal";
+        break;
+      default:
+        this.jobTitle = "other";
+        //break;
+    }
+
     this.startDate = startDate;
     this.endDate = endDate;
-    this.place = place;
+    this.Place = place;
   }
 }

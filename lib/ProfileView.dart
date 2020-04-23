@@ -38,6 +38,7 @@ class _profileState extends State<profile> {
 
   String jobTitle;
   places selectedPlaceExp;
+  places selectedJobTitle;
   places selectedPlaceprof;
 
   getProfileData() {
@@ -341,13 +342,27 @@ class _profileState extends State<profile> {
                                   fontSize: 18,
                                 ),
                               ),
-                              TextField(
-                                decoration: InputDecoration(
-                                    border: InputBorder.none,
-                                    hintText: 'Enter Here'),
-                                onChanged: (job) {
-                                  jobTitle = job;
+                              DropdownButton<places>(
+                                hint: Text('Select Job Title'),
+                                value: selectedJobTitle,
+                                onChanged: (places Value) {
+                                  setState(() {
+                                    selectedJobTitle = Value;
+                                  });
                                 },
+                                items: users2.map((places user) {
+                                  return DropdownMenuItem<places>(
+                                    value: user,
+                                    child: Text(
+                                      user.name,
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontSize: 16,
+                                          letterSpacing: 2,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  );
+                                }).toList(),
                               ),
                               Text(
                                 'Place',
@@ -442,7 +457,7 @@ class _profileState extends State<profile> {
                                     child: new Text('Add'),
                                     onPressed: () {
                                       Experience experience = new Experience(
-                                          jobTitle,
+                                          selectedJobTitle.name,
                                           sDate,
                                           eDate,
                                           widget.studentID,
@@ -540,7 +555,7 @@ class _profileState extends State<profile> {
                                             experiences[index].startDate,
                                             experiences[index].endDate,
                                             widget.studentID,
-                                        experiences[index].place);
+                                        experiences[index].Place);
                                         profile.deleteExperience(experience);
                                         Timer timer = new Timer(
                                             new Duration(seconds: 2), () {
@@ -587,7 +602,7 @@ class _profileState extends State<profile> {
                                   height: 10,
                                 ),
                                 Text(
-                                  '${experiences[index].place}',
+                                  '${experiences[index].Place}',
                                   style: TextStyle(
                                       fontSize: 20,
                                       letterSpacing: 2,
@@ -710,3 +725,4 @@ class places {
 }
 
 List<places> users = <places>[const places('STC'), const places('Mobaily'), const places('TC'), const places('IC'), const places('gov'), const places('other')];
+List<places> users2 = <places>[const places('Developer'), const places('Designer'), const places('Analyst'), const places('Other')];

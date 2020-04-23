@@ -37,7 +37,7 @@ void main() {
     });
   });
 
-  test('Add New Experience', () async{
+  /*test('Add New Experience', () async{
     Profile result = new Profile(437101237);
     DateTime startDate =  new DateTime.utc(2005, 11, 9);
     DateTime endDate =  new DateTime.utc(2007, 12, 28);
@@ -49,6 +49,6 @@ void main() {
       }
       print(expected);
       expect(expected, 1);
-  });
+  });*/
 
 }
