@@ -39,4 +39,20 @@ And this is how we managed our app
 * The system is not fully completed and need only to be integrated "mobile and web app" + It needs more testing and fixing bugs.
 
 ## Screenshot for our system
-
+![screenshot](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/1.PNG)
+![screenshot](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/2.PNG)
+![screenshot](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/3.PNG)
+![screenshot](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/4.PNG)
+![screenshot](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/5.PNG)
+![screenshot](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/6.PNG)
+![screenshot](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/7.PNG)
+![screenshot](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/8.PNG)
+![screenshot](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/9.PNG)
+![screenshot](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/10.PNG)
+![screenshot](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/11.PNG)
+![screenshot](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/12.PNG)
+![screenshot](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/13.PNG)
+![screenshot](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/14.PNG)
+![screenshot](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/15.PNG)
+![screenshot](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/16.PNG)
+![screenshot](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/17.PNG)
