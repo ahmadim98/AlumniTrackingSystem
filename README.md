@@ -39,7 +39,7 @@ And this is how we managed our app
 * The system is not fully completed and need only to be integrated "mobile and web app" + It needs more testing and fixing bugs.
 
 ## Screenshot for our system
-![](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/1.PNG)
+![](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/1.png)
 
 ![](https://raw.githubusercontent.com/ahmadim98/AlumniTrackingSystem/master/Screenshots/2.png)
 
