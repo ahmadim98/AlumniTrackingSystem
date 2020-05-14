@@ -222,10 +222,10 @@ class Profile {
   followTwitter(String alumniTwitter) {
     Future twitterFollow() async {
       // Setting placeholder api keys
-      String consumerApiKey = "QivrhF2QHWq4fotzoSl1Bi6aA";
-      String consumerApiSecret = "NwOYIg91nhG2vk2CHLtGLSoxHZfIXLj9h6KNRIAA8cJ5yCmXQ2";
-      String accessToken = "955843217370599424-V7dThBKiFXe3ilmyhaXulBqSanxuVe7";
-      String accessTokenSecret = "mYaTUgzLiiKUEgFup605pwjzuc5ynCgzXYMcKykHsIBDY";
+      String consumerApiKey = "";
+      String consumerApiSecret = "";
+      String accessToken = "";
+      String accessTokenSecret = "";
 
       // Creating the twitterApi Object with the secret and public keys
       // These keys are generated from the twitter developer page
@@ -259,25 +259,6 @@ class Profile {
     }
     twitterFollow();
   }
-
-  /*Future getPlaces() async {
-    // Open a connection (testdb should already exist)
-    final conn = await MySqlConnection.connect(ConnectionSettings(
-        host: DBH,
-        port: DBP,
-        user: DBU,
-        password: DBPAS,
-        db: DBN));
-    // Query the database using a parameterized query
-    var results = await conn.query(
-        'SELECT * FROM `Place`');
-    for (var col in results) {
-      Place place = new Place(col[0]);
-      this.Places.add(place);
-    }
-    await conn.close();
-  }*/
-
 }
 
 
